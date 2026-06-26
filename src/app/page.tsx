@@ -258,15 +258,9 @@ export default function HomePage() {
 
         <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="font-bold">{formData.breedingType === 'inseminasi-buatan' ? 'Tanggal IB' : 'Tanggal Perkawinan'}</Label>
-                <Input placeholder="YYYY-MM-DD" value={formData.matingDate} onChange={(e) => updateField('matingDate', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
-              </div>
-              <div className="space-y-2">
-                <Label className="font-bold">Tanggal Lahir</Label>
-                <Input placeholder="YYYY-MM-DD" value={formData.birthDate} onChange={(e) => updateField('birthDate', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
-              </div>
+            <div className="space-y-2">
+              <Label className="font-bold">Tanggal Lahir</Label>
+              <Input placeholder="YYYY-MM-DD" value={formData.birthDate} onChange={(e) => updateField('birthDate', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
             </div>
           </CardContent>
         </Card>
