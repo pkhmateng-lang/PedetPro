@@ -1,6 +1,7 @@
 
 "use client"
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -15,6 +16,18 @@ import {
 import { ClipboardList, Calendar as CalendarIcon, Image as ImageIcon, Save } from "lucide-react"
 
 export default function HomePage() {
+  const [puskeswan, setPuskeswan] = useState<string>("")
+
+  const budongBudongOfficers = [
+    "Anshari Saleh",
+    "Hadi",
+    "Nur Fauzi",
+    "Rahman",
+    "Suprapto",
+    "Tadi Sole",
+    "Lainnya"
+  ]
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-12">
       {/* Navigation Header Card */}
@@ -78,16 +91,16 @@ export default function HomePage() {
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-6 space-y-4">
           <Label className="text-sm font-bold text-foreground/80">Puskeswan</Label>
-          <Select>
+          <Select onValueChange={setPuskeswan}>
             <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
               <SelectValue placeholder="Pilih Puskeswan" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="budong-budong">Puskeswan Budong-Budong</SelectItem>
-              <SelectItem value="karossa">Puskeswan Karossa</SelectItem>
-              <SelectItem value="pangale">Puskeswan Pangale</SelectItem>
-              <SelectItem value="tobadak">Puskeswan Tobadak</SelectItem>
-              <SelectItem value="topoyo">Puskeswan Topoyo</SelectItem>
+              <SelectItem value="puskeswan-budong-budong">Puskeswan Budong-Budong</SelectItem>
+              <SelectItem value="puskeswan-karossa">Puskeswan Karossa</SelectItem>
+              <SelectItem value="puskeswan-pangale">Puskeswan Pangale</SelectItem>
+              <SelectItem value="puskeswan-tobadak">Puskeswan Tobadak</SelectItem>
+              <SelectItem value="puskeswan-topoyo">Puskeswan Topoyo</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
@@ -97,10 +110,25 @@ export default function HomePage() {
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-6 space-y-4">
           <Label className="text-sm font-bold text-foreground/80">Nama Petugas</Label>
-          <Input 
-            placeholder="Isi Nama Petugas Manual"
-            className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-          />
+          {puskeswan === "puskeswan-budong-budong" ? (
+            <Select>
+              <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
+                <SelectValue placeholder="Pilih Nama Petugas" />
+              </SelectTrigger>
+              <SelectContent>
+                {budongBudongOfficers.map((officer) => (
+                  <SelectItem key={officer} value={officer.toLowerCase().replace(/\s+/g, '-')}>
+                    {officer}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Input 
+              placeholder="Isi Nama Petugas Manual"
+              className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+            />
+          )}
         </CardContent>
       </Card>
 
