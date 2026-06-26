@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -13,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, BarChart3, Table as TableIcon, Undo2 } from "lucide-react"
+import { Search, BarChart3, Table as TableIcon, Undo2, Download } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 export default function DataLaporanPage() {
@@ -37,11 +38,17 @@ export default function DataLaporanPage() {
 
       {/* Page Title Card */}
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-        <CardContent className="p-8 space-y-2">
-          <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Data Laporan Kelahiran</h1>
-          <p className="text-muted-foreground font-medium">
-            Monitoring data kelahiran ternak dan hasil inseminasi buatan terpusat.
-          </p>
+        <CardContent className="p-8 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Data Laporan Kelahiran</h1>
+            <p className="text-muted-foreground font-medium">
+              Monitoring data kelahiran ternak dan hasil inseminasi buatan terpusat.
+            </p>
+          </div>
+          <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 h-12 px-6 shadow-md transition-all active:scale-95 self-end md:self-auto">
+            <Download className="size-5" />
+            Unduh laporan
+          </Button>
         </CardContent>
       </Card>
 
@@ -50,7 +57,7 @@ export default function DataLaporanPage() {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-muted-foreground tracking-wider">Puskeswan</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Puskeswan</Label>
               <Select>
                 <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
                   <SelectValue placeholder="Semua Puskeswan" />
@@ -67,7 +74,7 @@ export default function DataLaporanPage() {
             </div>
             
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-muted-foreground tracking-wider">Petugas</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Petugas</Label>
               <Select disabled>
                 <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
                   <SelectValue placeholder="Semua Petugas" />
@@ -79,7 +86,7 @@ export default function DataLaporanPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-muted-foreground tracking-wider">Bulan</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Bulan</Label>
               <Select>
                 <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
                   <SelectValue placeholder="Semua Bulan" />
@@ -103,7 +110,7 @@ export default function DataLaporanPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-muted-foreground tracking-wider">Tahun</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Tahun</Label>
               <Select>
                 <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
                   <SelectValue placeholder="Semua Tahun" />
