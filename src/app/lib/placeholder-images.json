@@ -1,0 +1,23 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "Abstract technological grid pattern with indigo glows",
+      "imageUrl": "https://picsum.photos/seed/tabula1/1200/800",
+      "imageHint": "tech grid"
+    },
+    {
+      "id": "blueprint-preview",
+      "description": "Clean architectural drawing or schematic",
+      "imageUrl": "https://picsum.photos/seed/tabula2/800/600",
+      "imageHint": "architectural blueprint"
+    },
+    {
+      "id": "workbench-bg",
+      "description": "Dark minimalist laboratory setting",
+      "imageUrl": "https://picsum.photos/seed/tabula3/1000/700",
+      "imageHint": "dark workspace"
+    }
+  ]
+}
