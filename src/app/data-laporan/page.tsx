@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -14,15 +14,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, BarChart3, Table as TableIcon, Undo2, Download } from "lucide-react"
+import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2 } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useFirestore, useCollection } from "@/firebase"
+import { collection, query, orderBy } from "firebase/firestore"
+import { format } from "date-fns"
 
 export default function DataLaporanPage() {
+  const db = useFirestore()
   const [view, setView] = useState<'tabel' | 'statistik'>('tabel')
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const reportsQuery = useMemo(() => {
+    return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
+  }, [db])
+
+  const { data: reports, loading } = useCollection(reportsQuery)
+
+  const filteredReports = useMemo(() => {
+    if (!reports) return []
+    return reports.filter(r => 
+      r.farmerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.officerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.farmerAddress?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [reports, searchQuery])
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-12 relative">
-      {/* Floating Back Button */}
       <div className="fixed left-6 bottom-10 z-[60] flex flex-col items-center gap-2">
         <Link href="/">
           <Button 
@@ -36,14 +55,11 @@ export default function DataLaporanPage() {
         <span className="text-[10px] font-bold text-[#064E3B] bg-white/80 px-2 py-0.5 rounded-full shadow-sm uppercase tracking-tighter">Home</span>
       </div>
 
-      {/* Page Title Card */}
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-8 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Data Laporan Kelahiran</h1>
-            <p className="text-muted-foreground font-medium">
-              Monitoring data kelahiran ternak dan hasil inseminasi buatan terpusat.
-            </p>
+            <p className="text-muted-foreground font-medium">Monitoring data kelahiran ternak dan hasil inseminasi buatan terpusat.</p>
           </div>
           <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 h-12 px-6 shadow-md transition-all active:scale-95 self-end md:self-auto">
             <Download className="size-5" />
@@ -52,119 +68,44 @@ export default function DataLaporanPage() {
         </CardContent>
       </Card>
 
-      {/* Header Grid Filters */}
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="space-y-2">
               <Label className="text-sm font-medium text-muted-foreground">Puskeswan</Label>
-              <Select>
-                <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
-                  <SelectValue placeholder="Semua Puskeswan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Puskeswan</SelectItem>
-                  <SelectItem value="budong-budong">Puskeswan Budong-Budong</SelectItem>
-                  <SelectItem value="karossa">Puskeswan Karossa</SelectItem>
-                  <SelectItem value="pangale">Puskeswan Pangale</SelectItem>
-                  <SelectItem value="tobadak">Puskeswan Tobadak</SelectItem>
-                  <SelectItem value="topoyo">Puskeswan Topoyo</SelectItem>
-                </SelectContent>
-              </Select>
+              <Select><SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4"><SelectValue placeholder="Semua Puskeswan" /></SelectTrigger><SelectContent><SelectItem value="all">Semua Puskeswan</SelectItem></SelectContent></Select>
             </div>
-            
             <div className="space-y-2">
               <Label className="text-sm font-medium text-muted-foreground">Petugas</Label>
-              <Select disabled>
-                <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
-                  <SelectValue placeholder="Semua Petugas" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Petugas</SelectItem>
-                </SelectContent>
-              </Select>
+              <Select disabled><SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4"><SelectValue placeholder="Semua Petugas" /></SelectTrigger><SelectContent><SelectItem value="all">Semua Petugas</SelectItem></SelectContent></Select>
             </div>
-
             <div className="space-y-2">
               <Label className="text-sm font-medium text-muted-foreground">Bulan</Label>
-              <Select>
-                <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
-                  <SelectValue placeholder="Semua Bulan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Bulan</SelectItem>
-                  <SelectItem value="1">Januari</SelectItem>
-                  <SelectItem value="2">Februari</SelectItem>
-                  <SelectItem value="3">Maret</SelectItem>
-                  <SelectItem value="4">April</SelectItem>
-                  <SelectItem value="5">Mei</SelectItem>
-                  <SelectItem value="6">Juni</SelectItem>
-                  <SelectItem value="7">Juli</SelectItem>
-                  <SelectItem value="8">Agustus</SelectItem>
-                  <SelectItem value="9">September</SelectItem>
-                  <SelectItem value="10">Oktober</SelectItem>
-                  <SelectItem value="11">November</SelectItem>
-                  <SelectItem value="12">Desember</SelectItem>
-                </SelectContent>
-              </Select>
+              <Select><SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4"><SelectValue placeholder="Semua Bulan" /></SelectTrigger><SelectContent><SelectItem value="all">Semua Bulan</SelectItem></SelectContent></Select>
             </div>
-
             <div className="space-y-2">
               <Label className="text-sm font-medium text-muted-foreground">Tahun</Label>
-              <Select>
-                <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
-                  <SelectValue placeholder="Semua Tahun" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Tahun</SelectItem>
-                  <SelectItem value="2024">2024</SelectItem>
-                  <SelectItem value="2025">2025</SelectItem>
-                </SelectContent>
-              </Select>
+              <Select><SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4"><SelectValue placeholder="Semua Tahun" /></SelectTrigger><SelectContent><SelectItem value="all">Semua Tahun</SelectItem></SelectContent></Select>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Search Bar */}
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
         <Input 
           placeholder="Cari peternak, alamat, atau petugas..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full md:max-w-md bg-white border-border/50 rounded-xl h-12 pl-12 pr-4 shadow-sm focus-visible:ring-1 focus-visible:ring-primary/20"
         />
       </div>
 
-      {/* View Toggle Row */}
-      <div className="flex items-center gap-4">
-        {/* Custom Toggle/Tabs */}
-        <div className="flex-1 flex bg-[#F3F4F6] rounded-xl p-1 gap-1 shadow-inner">
-          <Button 
-            onClick={() => setView('tabel')}
-            className={`flex-1 rounded-lg h-10 font-bold gap-2 transition-all ${
-              view === 'tabel' 
-                ? 'bg-[#FBBF24] text-black shadow-sm' 
-                : 'bg-transparent text-muted-foreground hover:bg-black/5'
-            }`}
-          >
-            <TableIcon className="size-4" />
-            Tabel
-          </Button>
-          <Button 
-            onClick={() => setView('statistik')}
-            className={`flex-1 rounded-lg h-10 font-bold gap-2 transition-all ${
-              view === 'statistik' 
-                ? 'bg-[#FBBF24] text-black shadow-sm' 
-                : 'bg-transparent text-muted-foreground hover:bg-black/5'
-            }`}
-          >
-            <BarChart3 className="size-4" />
-            Statistik
-          </Button>
-        </div>
+      <div className="flex bg-[#F3F4F6] rounded-xl p-1 gap-1 shadow-inner">
+        <Button onClick={() => setView('tabel')} className={`flex-1 rounded-lg h-10 font-bold gap-2 ${view === 'tabel' ? 'bg-[#FBBF24] text-black shadow-sm' : 'bg-transparent text-muted-foreground hover:bg-black/5'}`}><TableIcon className="size-4" /> Tabel</Button>
+        <Button onClick={() => setView('statistik')} className={`flex-1 rounded-lg h-10 font-bold gap-2 ${view === 'statistik' ? 'bg-[#FBBF24] text-black shadow-sm' : 'bg-transparent text-muted-foreground hover:bg-black/5'}`}><BarChart3 className="size-4" /> Statistik</Button>
       </div>
 
-      {/* Content View */}
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden min-h-[400px]">
         <CardContent className="p-0">
           {view === 'tabel' ? (
@@ -180,11 +121,23 @@ export default function DataLaporanPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-20 text-muted-foreground italic">
-                      Belum ada data laporan yang tersedia.
-                    </TableCell>
-                  </TableRow>
+                  {loading ? (
+                    <TableRow><TableCell colSpan={5} className="text-center py-20"><Loader2 className="animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                  ) : filteredReports.length > 0 ? (
+                    filteredReports.map((report) => (
+                      <TableRow key={report.id}>
+                        <TableCell>{report.serviceDate}</TableCell>
+                        <TableCell className="font-medium">{report.farmerName}</TableCell>
+                        <TableCell>{report.puskeswan?.replace('puskeswan-', '').replace('-', ' ')}</TableCell>
+                        <TableCell>{report.officerName}</TableCell>
+                        <TableCell className="capitalize">{report.breedingType?.replace('-', ' ')}</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground italic">Belum ada data laporan yang tersedia.</TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>

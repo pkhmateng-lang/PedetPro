@@ -1,0 +1,41 @@
+
+{
+  "entities": {
+    "BirthReport": {
+      "title": "Birth Report",
+      "description": "Data entity for livestock birth reports and breeding services.",
+      "type": "object",
+      "properties": {
+        "serviceDate": { "type": "string" },
+        "puskeswan": { "type": "string" },
+        "officerName": { "type": "string" },
+        "farmerName": { "type": "string" },
+        "farmerId": { "type": "string" },
+        "farmerAddress": { "type": "string" },
+        "breedingType": { "type": "string", "enum": ["kawin-alam", "inseminasi-buatan"] },
+        "damBreed": { "type": "string" },
+        "damEartag": { "type": "string" },
+        "sireBreed": { "type": "string" },
+        "sireEartag": { "type": "string" },
+        "strawId": { "type": "string" },
+        "batchId": { "type": "string" },
+        "strawProducer": { "type": "string" },
+        "matingDate": { "type": "string" },
+        "birthDate": { "type": "string" },
+        "offspringSex": { "type": "string" },
+        "offspringCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["farmerName", "puskeswan", "breedingType"]
+    }
+  },
+  "auth": {
+    "providers": ["google.com"]
+  },
+  "firestore": {
+    "/reports/{reportId}": {
+      "schema": "BirthReport",
+      "description": "Collection of all birth reports submitted by officers."
+    }
+  }
+}
