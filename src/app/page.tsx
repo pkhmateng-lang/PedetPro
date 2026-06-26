@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { ClipboardList, Users, ArrowUpRight, CheckCircle2, AlertCircle } from "lucide-react"
+import { ClipboardList, Users, CheckCircle2, AlertCircle } from "lucide-react"
 import Link from "next/link"
 
 export default function HomePage() {
@@ -39,46 +39,6 @@ export default function HomePage() {
           </Button>
         </div>
       </Card>
-
-      {/* Dashboard Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-none shadow-sm bg-white hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Total KPM</CardTitle>
-            <Users className="h-4 w-4 text-[#064E3B]" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-[#064E3B]">1,284</div>
-            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-              <span className="text-green-600 flex items-center"><ArrowUpRight className="size-3" /> +12%</span> bln lalu
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-none shadow-sm bg-white hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Laporan Masuk</CardTitle>
-            <ClipboardList className="h-4 w-4 text-[#FBBF24]" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-[#064E3B]">42</div>
-            <p className="text-xs text-muted-foreground mt-1">8 laporan butuh verifikasi</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-none shadow-sm bg-white hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Status Penyaluran</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-[#064E3B]">92%</div>
-            <div className="w-full bg-muted h-2 rounded-full mt-3">
-              <div className="bg-green-600 h-2 rounded-full w-[92%] shadow-[0_0_8px_rgba(22,163,74,0.4)]"></div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Quick Actions / Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
