@@ -78,9 +78,15 @@ export default function HomePage() {
       createdAt: serverTimestamp(),
     }
 
-    // Initiate the write operation and immediately navigate for a smooth, "instant" feel.
-    // Firestore's local cache ensures the data appears immediately on the next page.
+    // Initiate the write operation
     addDoc(reportsRef, payload)
+      .then(() => {
+        toast({
+          title: "Berhasil Disimpan",
+          description: "Data laporan kelahiran telah berhasil masuk ke sistem.",
+        })
+        router.push('/data-laporan')
+      })
       .catch(async (err) => {
         const permissionError = new FirestorePermissionError({
           path: reportsRef.path,
@@ -89,17 +95,13 @@ export default function HomePage() {
         });
         errorEmitter.emit('permission-error', permissionError);
         console.error("Firestore save error:", err);
+        setLoading(false)
+        toast({
+          variant: "destructive",
+          title: "Gagal Menyimpan",
+          description: "Terjadi kesalahan saat menyimpan data ke database.",
+        })
       });
-
-    // We don't await the addDoc here to provide a faster UI response.
-    // The redirect happens immediately after the write is queued.
-    toast({
-      title: "Data Sedang Disimpan",
-      description: "Laporan kelahiran Anda sedang diproses dan akan segera muncul.",
-    })
-    
-    // Immediate navigation to the data table
-    router.push('/data-laporan')
   }
 
   const budongBudongOfficers = ["Anshari Saleh", "Hadi", "Nur Fauzi", "Rahman", "Suprapto", "Tadi Saleh", "Lainnya"]

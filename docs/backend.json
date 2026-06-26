@@ -20,7 +20,6 @@
         "strawId": { "type": "string" },
         "batchId": { "type": "string" },
         "strawProducer": { "type": "string" },
-        "matingDate": { "type": "string" },
         "birthDate": { "type": "string" },
         "offspringSex": { "type": "string" },
         "offspringCount": { "type": "number" },
