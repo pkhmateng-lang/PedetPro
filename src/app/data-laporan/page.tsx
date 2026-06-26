@@ -22,6 +22,20 @@ export default function DataLaporanPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-12 relative">
+      {/* Floating Back Button */}
+      <div className="fixed left-6 bottom-10 z-[60] flex flex-col items-center gap-2">
+        <Link href="/">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="size-14 rounded-full bg-[#064E3B] text-white hover:bg-[#064E3B]/90 shadow-[0_10px_40px_-10px_rgba(6,78,59,0.5)] border-4 border-white transition-all hover:scale-110 active:scale-95"
+          >
+            <Undo2 className="size-8" />
+          </Button>
+        </Link>
+        <span className="text-[10px] font-bold text-[#064E3B] bg-white/80 px-2 py-0.5 rounded-full shadow-sm uppercase tracking-tighter">Home</span>
+      </div>
+
       {/* Header Grid Filters */}
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-6">
@@ -65,7 +79,16 @@ export default function DataLaporanPage() {
                   <SelectItem value="all">Semua Bulan</SelectItem>
                   <SelectItem value="1">Januari</SelectItem>
                   <SelectItem value="2">Februari</SelectItem>
-                  {/* ... other months */}
+                  <SelectItem value="3">Maret</SelectItem>
+                  <SelectItem value="4">April</SelectItem>
+                  <SelectItem value="5">Mei</SelectItem>
+                  <SelectItem value="6">Juni</SelectItem>
+                  <SelectItem value="7">Juli</SelectItem>
+                  <SelectItem value="8">Agustus</SelectItem>
+                  <SelectItem value="9">September</SelectItem>
+                  <SelectItem value="10">Oktober</SelectItem>
+                  <SelectItem value="11">November</SelectItem>
+                  <SelectItem value="12">Desember</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -96,19 +119,8 @@ export default function DataLaporanPage() {
         />
       </div>
 
-      {/* View Toggle and Back Button Row */}
+      {/* View Toggle Row */}
       <div className="flex items-center gap-4">
-        {/* Back Button */}
-        <Link href="/">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="size-12 rounded-full bg-[#064E3B] text-white hover:bg-[#064E3B]/90 shadow-lg"
-          >
-            <Undo2 className="size-6" />
-          </Button>
-        </Link>
-
         {/* Custom Toggle/Tabs */}
         <div className="flex-1 flex bg-[#F3F4F6] rounded-xl p-1 gap-1 shadow-inner">
           <Button 
