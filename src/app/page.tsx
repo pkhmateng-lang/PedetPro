@@ -39,9 +39,22 @@ export default function HomePage() {
     "Lainnya"
   ]
 
+  const pangaleOfficers = [
+    "Andri",
+    "drh. Ketut Elok",
+    "Jarwo",
+    "Jawaril",
+    "Kamarudin",
+    "Kamaruddin",
+    "Mansyur",
+    "Sugeng",
+    "Lainnya"
+  ]
+
   const getOfficerList = () => {
     if (puskeswan === "puskeswan-budong-budong") return budongBudongOfficers
     if (puskeswan === "puskeswan-karossa") return karossaOfficers
+    if (puskeswan === "puskeswan-pangale") return pangaleOfficers
     return null
   }
 
