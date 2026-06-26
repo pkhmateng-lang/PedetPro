@@ -14,16 +14,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2 } from "lucide-react"
+import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2, MapPin } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useFirestore, useCollection } from "@/firebase"
 import { collection, query, orderBy } from "firebase/firestore"
-import { format } from "date-fns"
+import { format, parseISO, getMonth, getYear } from "date-fns"
 
 export default function DataLaporanPage() {
   const db = useFirestore()
   const [view, setView] = useState<'tabel' | 'statistik'>('tabel')
   const [searchQuery, setSearchQuery] = useState("")
+  const [filterPuskeswan, setFilterPuskeswan] = useState("all")
+  const [filterBulan, setFilterBulan] = useState("all")
+  const [filterTahun, setFilterTahun] = useState("all")
 
   const reportsQuery = useMemo(() => {
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
@@ -33,12 +36,46 @@ export default function DataLaporanPage() {
 
   const filteredReports = useMemo(() => {
     if (!reports) return []
-    return reports.filter(r => 
-      r.farmerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.officerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.farmerAddress?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  }, [reports, searchQuery])
+    return reports.filter(r => {
+      const matchSearch = 
+        r.farmerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        r.officerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        r.farmerAddress?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        r.damEartag?.toLowerCase().includes(searchQuery.toLowerCase())
+
+      const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
+      
+      let matchDate = true
+      if (r.serviceDate) {
+        const date = parseISO(r.serviceDate)
+        if (filterBulan !== "all") {
+          matchDate = matchDate && (getMonth(date) + 1).toString() === filterBulan
+        }
+        if (filterTahun !== "all") {
+          matchDate = matchDate && getYear(date).toString() === filterTahun
+        }
+      }
+
+      return matchSearch && matchPuskeswan && matchDate
+    })
+  }, [reports, searchQuery, filterPuskeswan, filterBulan, filterTahun])
+
+  const months = [
+    { value: "1", label: "Januari" },
+    { value: "2", label: "Februari" },
+    { value: "3", label: "Maret" },
+    { value: "4", label: "April" },
+    { value: "5", label: "Mei" },
+    { value: "6", label: "Juni" },
+    { value: "7", label: "Juli" },
+    { value: "8", label: "Agustus" },
+    { value: "9", label: "September" },
+    { value: "10", label: "Oktober" },
+    { value: "11", label: "November" },
+    { value: "12", label: "Desember" },
+  ]
+
+  const years = ["2024", "2025", "2026"]
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-12 relative">
@@ -59,7 +96,7 @@ export default function DataLaporanPage() {
         <CardContent className="p-8 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Data Laporan Kelahiran</h1>
-            <p className="text-muted-foreground font-medium">Monitoring data kelahiran ternak dan hasil inseminasi buatan terpusat.</p>
+            <p className="text-muted-foreground font-medium">Monitoring data kelahiran ternak dan hasil inseminasi buatan terpusat di Kabupaten Mamuju Tengah.</p>
           </div>
           <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 h-12 px-6 shadow-md transition-all active:scale-95 self-end md:self-auto">
             <Download className="size-5" />
@@ -73,19 +110,61 @@ export default function DataLaporanPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="space-y-2">
               <Label className="text-sm font-medium text-muted-foreground">Puskeswan</Label>
-              <Select><SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4"><SelectValue placeholder="Semua Puskeswan" /></SelectTrigger><SelectContent><SelectItem value="all">Semua Puskeswan</SelectItem></SelectContent></Select>
-            </div>
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">Petugas</Label>
-              <Select disabled><SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4"><SelectValue placeholder="Semua Petugas" /></SelectTrigger><SelectContent><SelectItem value="all">Semua Petugas</SelectItem></SelectContent></Select>
+              <Select value={filterPuskeswan} onValueChange={setFilterPuskeswan}>
+                <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4">
+                  <SelectValue placeholder="Semua Puskeswan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Puskeswan</SelectItem>
+                  <SelectItem value="puskeswan-budong-budong">Puskeswan Budong-Budong</SelectItem>
+                  <SelectItem value="puskeswan-karossa">Puskeswan Karossa</SelectItem>
+                  <SelectItem value="puskeswan-pangale">Puskeswan Pangale</SelectItem>
+                  <SelectItem value="puskeswan-tobadak">Puskeswan Tobadak</SelectItem>
+                  <SelectItem value="puskeswan-topoyo">Puskeswan Topoyo</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-medium text-muted-foreground">Bulan</Label>
-              <Select><SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4"><SelectValue placeholder="Semua Bulan" /></SelectTrigger><SelectContent><SelectItem value="all">Semua Bulan</SelectItem></SelectContent></Select>
+              <Select value={filterBulan} onValueChange={setFilterBulan}>
+                <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4">
+                  <SelectValue placeholder="Semua Bulan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Bulan</SelectItem>
+                  {months.map(m => (
+                    <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-medium text-muted-foreground">Tahun</Label>
-              <Select><SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4"><SelectValue placeholder="Semua Tahun" /></SelectTrigger><SelectContent><SelectItem value="all">Semua Tahun</SelectItem></SelectContent></Select>
+              <Select value={filterTahun} onValueChange={setFilterTahun}>
+                <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4">
+                  <SelectValue placeholder="Semua Tahun" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Tahun</SelectItem>
+                  {years.map(y => (
+                    <SelectItem key={y} value={y}>{y}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-end">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setFilterPuskeswan("all")
+                  setFilterBulan("all")
+                  setFilterTahun("all")
+                  setSearchQuery("")
+                }}
+                className="w-full h-11 rounded-xl font-bold text-muted-foreground"
+              >
+                Reset Filter
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -114,10 +193,10 @@ export default function DataLaporanPage() {
                 <TableHeader className="bg-[#F8FAFC]">
                   <TableRow>
                     <TableHead className="font-bold">Tanggal</TableHead>
-                    <TableHead className="font-bold">Peternak</TableHead>
+                    <TableHead className="font-bold">Peternak & Alamat</TableHead>
                     <TableHead className="font-bold">Puskeswan</TableHead>
                     <TableHead className="font-bold">Petugas</TableHead>
-                    <TableHead className="font-bold">Jenis</TableHead>
+                    <TableHead className="font-bold">Detail Kelahiran</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -125,12 +204,41 @@ export default function DataLaporanPage() {
                     <TableRow><TableCell colSpan={5} className="text-center py-20"><Loader2 className="animate-spin mx-auto text-primary" /></TableCell></TableRow>
                   ) : filteredReports.length > 0 ? (
                     filteredReports.map((report) => (
-                      <TableRow key={report.id}>
-                        <TableCell>{report.serviceDate}</TableCell>
-                        <TableCell className="font-medium">{report.farmerName}</TableCell>
-                        <TableCell>{report.puskeswan?.replace('puskeswan-', '').replace('-', ' ')}</TableCell>
-                        <TableCell>{report.officerName}</TableCell>
-                        <TableCell className="capitalize">{report.breedingType?.replace('-', ' ')}</TableCell>
+                      <TableRow key={report.id} className="hover:bg-muted/50 transition-colors">
+                        <TableCell className="whitespace-nowrap font-medium text-muted-foreground">
+                          {report.serviceDate ? format(parseISO(report.serviceDate), 'dd MMM yyyy') : '-'}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-bold text-[#064E3B]">{report.farmerName}</span>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <MapPin className="size-3 shrink-0" />
+                              <span className="truncate max-w-[200px]">{report.farmerAddress || 'Alamat tidak diisi'}</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#F3F4F6] text-[#064E3B] capitalize">
+                            {report.puskeswan?.replace('puskeswan-', '').replace('-', ' ')}
+                          </span>
+                        </TableCell>
+                        <TableCell className="font-medium">{report.officerName}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col text-xs space-y-1">
+                            <div className="flex gap-2">
+                              <span className="text-muted-foreground">Jenis:</span>
+                              <span className="font-bold capitalize">{report.offspringSex || '-'}</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <span className="text-muted-foreground">Jml:</span>
+                              <span className="font-bold">{report.offspringCount || 1}</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <span className="text-muted-foreground">Induk:</span>
+                              <span className="italic">{report.damBreed || '-'} ({report.damEartag || 'No Tag'})</span>
+                            </div>
+                          </div>
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
