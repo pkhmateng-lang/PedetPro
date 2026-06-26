@@ -1,4 +1,3 @@
-
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -32,7 +31,7 @@ export default function HomePage() {
                 <rect width="7" height="7" x="3" y="14" rx="1" />
               </svg>
             </div>
-            <h1 className="text-2xl md:text-3xl font-headline font-bold text-[#064E3B]">PKH Mateng</h1>
+            <h1 className="text-xl md:text-2xl font-headline font-bold text-[#064E3B]">PKH Mateng</h1>
           </div>
           <Button variant="outline" className="rounded-xl border-[#064E3B] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all gap-2 px-6 font-bold shadow-sm">
             <ClipboardList className="size-5" />
