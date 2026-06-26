@@ -2,6 +2,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -109,10 +110,12 @@ export default function HomePage() {
             </div>
             <h1 className="text-xl md:text-2xl font-headline font-bold text-[#064E3B]">PKH Mateng</h1>
           </div>
-          <Button variant="outline" className="rounded-xl border-[#064E3B] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all gap-2 px-6 font-bold shadow-sm">
-            <ClipboardList className="size-5" />
-            Data Lap.
-          </Button>
+          <Link href="/data-laporan">
+            <Button variant="outline" className="rounded-xl border-[#064E3B] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all gap-2 px-6 font-bold shadow-sm">
+              <ClipboardList className="size-5" />
+              Data Lap.
+            </Button>
+          </Link>
         </div>
       </Card>
 
@@ -186,36 +189,30 @@ export default function HomePage() {
         </CardContent>
       </Card>
 
-      {/* Farmer Name Card */}
+      {/* Farmer Details Cards Grouped */}
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-        <CardContent className="p-6 space-y-4">
-          <Label className="text-sm font-bold text-foreground/80">Nama Peternak</Label>
-          <Input 
-            placeholder="Isi Nama Peternak"
-            className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-          />
-        </CardContent>
-      </Card>
-
-      {/* Farmer Identity Card */}
-      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-        <CardContent className="p-6 space-y-4">
-          <Label className="text-sm font-bold text-foreground/80">Identitas Peternak (KTP / No.Hp)</Label>
-          <Input 
-            placeholder="Isi KTP atau No. Hp"
-            className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-          />
-        </CardContent>
-      </Card>
-
-      {/* Farmer Address Card */}
-      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-        <CardContent className="p-6 space-y-4">
-          <Label className="text-sm font-bold text-foreground/80">Alamat Peternak</Label>
-          <Input 
-            placeholder="Isi Alamat Lengkap"
-            className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-          />
+        <CardContent className="p-6 space-y-6">
+          <div className="space-y-4">
+            <Label className="text-sm font-bold text-foreground/80">Nama Peternak</Label>
+            <Input 
+              placeholder="Isi Nama Peternak"
+              className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+            />
+          </div>
+          <div className="space-y-4">
+            <Label className="text-sm font-bold text-foreground/80">Identitas Peternak (KTP / No.Hp)</Label>
+            <Input 
+              placeholder="Isi KTP atau No. Hp"
+              className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+            />
+          </div>
+          <div className="space-y-4">
+            <Label className="text-sm font-bold text-foreground/80">Alamat Peternak</Label>
+            <Input 
+              placeholder="Isi Alamat Lengkap"
+              className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+            />
+          </div>
         </CardContent>
       </Card>
 
@@ -235,63 +232,94 @@ export default function HomePage() {
         </CardContent>
       </Card>
 
-      {/* Conditional Cards for Kawin Alam */}
-      {breedingType === "kawin-alam" && (
-        <div className="space-y-6 animate-in slide-in-from-top-2 duration-300">
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Jenis Indukan</Label>
-                <Input 
-                  placeholder="Isi Jenis Indukan"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">No. Eartag Induk</Label>
-                <Input 
-                  placeholder="Isi No. Eartag Induk"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-            </CardContent>
-          </Card>
+      {/* Conditional Cards for Breeding Type */}
+      <div className="space-y-6 animate-in slide-in-from-top-2 duration-300">
+        {/* Indukan Section */}
+        <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+          <CardContent className="p-6 space-y-6">
+            <div className="space-y-4">
+              <Label className="text-sm font-bold text-foreground/80">Jenis Indukan</Label>
+              <Input 
+                placeholder="Isi Jenis Indukan"
+                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+              />
+            </div>
+            <div className="space-y-4">
+              <Label className="text-sm font-bold text-foreground/80">No. Eartag Induk</Label>
+              <Input 
+                placeholder="Isi No. Eartag Induk"
+                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Jenis Pejantan</Label>
-                <Input 
-                  placeholder="Isi Jenis Pejantan"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">No. Eartag Pejantan</Label>
-                <Input 
-                  placeholder="Isi No. Eartag Pejantan"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-            </CardContent>
-          </Card>
+        {/* Pejantan Section */}
+        <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+          <CardContent className="p-6 space-y-6">
+            <div className="space-y-4">
+              <Label className="text-sm font-bold text-foreground/80">Jenis Pejantan</Label>
+              <Input 
+                placeholder={breedingType === 'inseminasi-buatan' ? "Isi Jenis Pejantan atau Kode Straw" : "Isi Jenis Pejantan"}
+                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+              />
+            </div>
+            <div className="space-y-4">
+              <Label className="text-sm font-bold text-foreground/80">No. Eartag Pejantan</Label>
+              <Input 
+                placeholder="Isi No. Eartag Pejantan"
+                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+              />
+            </div>
+            {breedingType === 'inseminasi-buatan' && (
+              <>
+                <div className="space-y-4">
+                  <Label className="text-sm font-bold text-foreground/80">Id Straw Pejantan</Label>
+                  <Input 
+                    placeholder="Isi Id Straw Pejantan"
+                    className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                  />
+                </div>
+                <div className="space-y-4">
+                  <Label className="text-sm font-bold text-foreground/80">Id Batch Straw</Label>
+                  <Input 
+                    placeholder="Isi Id Batch Straw"
+                    className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                  />
+                </div>
+                <div className="space-y-4">
+                  <Label className="text-sm font-bold text-foreground/80">Produsen Straw</Label>
+                  <Select>
+                    <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
+                      <SelectValue placeholder="Pilih Produsen Straw" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="bib-lembang">BIB Lembang</SelectItem>
+                      <SelectItem value="bib-singosari">BIB Singosari</SelectItem>
+                      <SelectItem value="bib-pucak-maros">BIB Pucak Maros</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
 
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Tanggal Perkawinan</Label>
+        {/* Date Section */}
+        <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+          <CardContent className="p-6 space-y-6">
+            <div className="space-y-4">
+              <Label className="text-sm font-bold text-foreground/80">{breedingType === 'inseminasi-buatan' ? 'Tanggal IB (Inseminasi)' : 'Tanggal Perkawinan'}</Label>
               <div className="relative">
                 <Input 
                   type="text" 
-                  placeholder="Pilih Tanggal Perkawinan"
+                  placeholder={breedingType === 'inseminasi-buatan' ? "Pilih Tanggal IB" : "Pilih Tanggal Perkawinan"}
                   className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 pr-10 focus-visible:ring-1 focus-visible:ring-primary/20"
                 />
                 <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-4">
+            </div>
+            <div className="space-y-4">
               <Label className="text-sm font-bold text-foreground/80">Tanggal Lahir</Label>
               <div className="relative">
                 <Input 
@@ -301,168 +329,41 @@ export default function HomePage() {
                 />
                 <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Jenis Kelamin Anakan</Label>
-                <Select>
-                  <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
-                    <SelectValue placeholder="Pilih Jenis Kelamin" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="jantan">Jantan</SelectItem>
-                    <SelectItem value="betina">Betina</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Jumlah Anak</Label>
-                <Input 
-                  type="number"
-                  placeholder="Isi Jumlah Anak"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-              <div className="flex justify-end pt-2">
-                <Button variant="ghost" size="icon" className="rounded-full bg-[#F3F4F6] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all shadow-sm">
-                  <Plus className="size-5" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Conditional Cards for Inseminasi Buatan */}
-      {breedingType === "inseminasi-buatan" && (
-        <div className="space-y-6 animate-in slide-in-from-top-2 duration-300">
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Jenis Indukan</Label>
-                <Input 
-                  placeholder="Isi Jenis Indukan"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">No. Eartag Induk</Label>
-                <Input 
-                  placeholder="Isi No. Eartag Induk"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Jenis Pejantan (Kode Straw)</Label>
-                <Input 
-                  placeholder="Isi Jenis Pejantan atau Kode Straw"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">No. Eartag Pejantan</Label>
-                <Input 
-                  placeholder="Isi No. Eartag Pejantan"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Id Straw Pejantan</Label>
-                <Input 
-                  placeholder="Isi Id Straw Pejantan"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Id Batch Straw</Label>
-                <Input 
-                  placeholder="Isi Id Batch Straw"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Produsen Straw</Label>
-                <Select>
-                  <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
-                    <SelectValue placeholder="Pilih Produsen Straw" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="bib-lembang">BIB Lembang</SelectItem>
-                    <SelectItem value="bib-singosari">BIB Singosari</SelectItem>
-                    <SelectItem value="bib-pucak-maros">BIB Pucak Maros</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Tanggal IB (Inseminasi)</Label>
-              <div className="relative">
-                <Input 
-                  type="text" 
-                  placeholder="Pilih Tanggal IB"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 pr-10 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-                <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Tanggal Lahir</Label>
-              <div className="relative">
-                <Input 
-                  type="text" 
-                  placeholder="Pilih Tanggal Lahir"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 pr-10 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-                <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Jenis Kelamin Anakan</Label>
-                <Select>
-                  <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
-                    <SelectValue placeholder="Pilih Jenis Kelamin" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="jantan">Jantan</SelectItem>
-                    <SelectItem value="betina">Betina</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-4">
-                <Label className="text-sm font-bold text-foreground/80">Jumlah Anak</Label>
-                <Input 
-                  type="number"
-                  placeholder="Isi Jumlah Anak"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-              </div>
-              <div className="flex justify-end pt-2">
-                <Button variant="ghost" size="icon" className="rounded-full bg-[#F3F4F6] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all shadow-sm">
-                  <Plus className="size-5" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        {/* Offspring Section */}
+        <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+          <CardContent className="p-6 space-y-6">
+            <div className="space-y-4">
+              <Label className="text-sm font-bold text-foreground/80">Jenis Kelamin Anakan</Label>
+              <Select>
+                <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
+                  <SelectValue placeholder="Pilih Jenis Kelamin" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="jantan">Jantan</SelectItem>
+                  <SelectItem value="betina">Betina</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-4">
+              <Label className="text-sm font-bold text-foreground/80">Jumlah Anak</Label>
+              <Input 
+                type="number"
+                placeholder="Isi Jumlah Anak"
+                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+              />
+            </div>
+            <div className="flex justify-end pt-2">
+              <Button variant="ghost" size="icon" className="rounded-full bg-[#F3F4F6] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all shadow-sm">
+                <Plus className="size-5" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Photo Documentation Card */}
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
