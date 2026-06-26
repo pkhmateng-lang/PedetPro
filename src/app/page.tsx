@@ -390,10 +390,16 @@ export default function HomePage() {
               </div>
               <div className="space-y-4">
                 <Label className="text-sm font-bold text-foreground/80">Produsen Straw</Label>
-                <Input 
-                  placeholder="Isi Produsen Straw"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
+                <Select>
+                  <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
+                    <SelectValue placeholder="Pilih Produsen Straw" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bib-lembang">BIB Lembang</SelectItem>
+                    <SelectItem value="bib-singosari">BIB Singosari</SelectItem>
+                    <SelectItem value="bib-pucak-maros">BIB Pucak Maros</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
