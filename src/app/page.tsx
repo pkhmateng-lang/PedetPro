@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { ClipboardList, Users, CheckCircle2, AlertCircle } from "lucide-react"
+import { ClipboardList, Users, AlertCircle } from "lucide-react"
 import Link from "next/link"
 
 export default function HomePage() {
@@ -47,19 +47,6 @@ export default function HomePage() {
             <CardTitle className="text-xl font-bold text-[#064E3B]">Aktivitas Terbaru</CardTitle>
             <CardDescription>Pemutakhiran data oleh pendamping PKH</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-start gap-4 p-3 rounded-lg hover:bg-secondary/10 transition-colors border border-transparent hover:border-border">
-                <div className="mt-1 bg-green-100 p-2 rounded-full">
-                  <CheckCircle2 className="size-4 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold">Verifikasi KPM Selesai</p>
-                  <p className="text-xs text-muted-foreground">Desa Topoyo • 2 jam yang lalu</p>
-                </div>
-              </div>
-            ))}
-          </CardContent>
         </Card>
 
         <Card className="border-none shadow-sm bg-[#064E3B] text-white overflow-hidden relative">
