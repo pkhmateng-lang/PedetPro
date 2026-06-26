@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -19,15 +19,17 @@ import { useFirestore } from "@/firebase"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { errorEmitter } from "@/firebase/error-emitter"
 import { FirestorePermissionError } from "@/firebase/errors"
+import { useToast } from "@/hooks/use-toast"
 
 export default function HomePage() {
   const router = useRouter()
   const db = useFirestore()
+  const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   
   // Form States
   const [formData, setFormData] = useState({
-    serviceDate: new Date().toLocaleDateString('en-US'),
+    serviceDate: "",
     puskeswan: "",
     officerName: "",
     farmerName: "",
@@ -41,11 +43,18 @@ export default function HomePage() {
     strawId: "",
     batchId: "",
     strawProducer: "",
-    matingDate: "",
     birthDate: "",
     offspringSex: "",
     offspringCount: 1,
   })
+
+  // Set default date on client side to avoid hydration mismatch
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      serviceDate: new Date().toLocaleDateString('en-GB').split('/').reverse().join('-')
+    }))
+  }, [])
 
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -53,7 +62,11 @@ export default function HomePage() {
 
   const handleSave = () => {
     if (!formData.farmerName || !formData.puskeswan) {
-      alert("Harap isi Nama Peternak dan Puskeswan.");
+      toast({
+        variant: "destructive",
+        title: "Data Tidak Lengkap",
+        description: "Harap isi Nama Peternak dan Puskeswan sebelum menyimpan.",
+      })
       return;
     }
 
@@ -67,6 +80,11 @@ export default function HomePage() {
 
     addDoc(reportsRef, payload)
       .then(() => {
+        toast({
+          title: "Berhasil Disimpan",
+          description: "Laporan kelahiran telah berhasil ditambahkan ke sistem.",
+        })
+        // Smoothly navigate to reports page
         router.push('/data-laporan')
       })
       .catch(async (err) => {
@@ -77,6 +95,11 @@ export default function HomePage() {
         });
         errorEmitter.emit('permission-error', permissionError);
         setLoading(false)
+        toast({
+          variant: "destructive",
+          title: "Gagal Menyimpan",
+          description: "Terjadi kesalahan saat menyimpan data. Silakan coba lagi.",
+        })
       })
   }
 
@@ -112,11 +135,12 @@ export default function HomePage() {
             <Label className="text-sm font-bold text-foreground/80">Tanggal Pelayanan Kelahiran</Label>
             <div className="relative">
               <Input 
+                type="date"
                 value={formData.serviceDate}
                 onChange={(e) => updateField('serviceDate', e.target.value)}
                 className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20"
               />
-              <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
             </div>
           </CardContent>
         </Card>
@@ -260,7 +284,7 @@ export default function HomePage() {
           <CardContent className="p-6">
             <div className="space-y-2">
               <Label className="font-bold">Tanggal Lahir</Label>
-              <Input placeholder="YYYY-MM-DD" value={formData.birthDate} onChange={(e) => updateField('birthDate', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
+              <Input type="date" value={formData.birthDate} onChange={(e) => updateField('birthDate', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
             </div>
           </CardContent>
         </Card>
@@ -282,7 +306,7 @@ export default function HomePage() {
               </div>
               <div className="space-y-2">
                 <Label className="font-bold">Jumlah Anak</Label>
-                <Input type="number" value={formData.offspringCount} onChange={(e) => updateField('offspringCount', parseInt(e.target.value))} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
+                <Input type="number" min="1" value={formData.offspringCount} onChange={(e) => updateField('offspringCount', parseInt(e.target.value) || 1)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
               </div>
             </div>
             <Button variant="ghost" size="icon" className="absolute bottom-6 right-6 rounded-full bg-[#F3F4F6] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all">
@@ -298,7 +322,7 @@ export default function HomePage() {
           onClick={handleSave}
           className="h-12 px-8 rounded-xl bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold gap-3 shadow-md transition-all active:scale-[0.98]"
         >
-          {loading ? <Loader2 className="animate-spin" /> : <Save className="size-5" />}
+          {loading ? <Loader2 className="animate-spin size-5" /> : <Save className="size-5" />}
           Simpan Data Laporan
         </Button>
       </div>
