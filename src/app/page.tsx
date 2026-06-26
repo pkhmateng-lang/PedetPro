@@ -28,6 +28,25 @@ export default function HomePage() {
     "Lainnya"
   ]
 
+  const karossaOfficers = [
+    "Asri Rasyid",
+    "Basuki",
+    "drh. Stephani",
+    "Hasaruddin",
+    "Nasaruddin",
+    "Adiatman",
+    "Surianca",
+    "Lainnya"
+  ]
+
+  const getOfficerList = () => {
+    if (puskeswan === "puskeswan-budong-budong") return budongBudongOfficers
+    if (puskeswan === "puskeswan-karossa") return karossaOfficers
+    return null
+  }
+
+  const currentOfficers = getOfficerList()
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-12">
       {/* Navigation Header Card */}
@@ -110,13 +129,13 @@ export default function HomePage() {
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-6 space-y-4">
           <Label className="text-sm font-bold text-foreground/80">Nama Petugas</Label>
-          {puskeswan === "puskeswan-budong-budong" ? (
+          {currentOfficers ? (
             <Select>
               <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
                 <SelectValue placeholder="Pilih Nama Petugas" />
               </SelectTrigger>
               <SelectContent>
-                {budongBudongOfficers.map((officer) => (
+                {currentOfficers.map((officer) => (
                   <SelectItem key={officer} value={officer.toLowerCase().replace(/\s+/g, '-')}>
                     {officer}
                   </SelectItem>
