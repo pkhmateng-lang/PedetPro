@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ClipboardList, Calendar as CalendarIcon } from "lucide-react"
+import { ClipboardList, Calendar as CalendarIcon, Image as ImageIcon, Save } from "lucide-react"
 
 export default function HomePage() {
   return (
@@ -149,6 +149,23 @@ export default function HomePage() {
           </Select>
         </CardContent>
       </Card>
+
+      {/* Photo Documentation Card */}
+      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+        <CardContent className="p-6 space-y-4">
+          <Label className="text-sm font-bold text-foreground/80">Foto Dokumentasi Kelahiran</Label>
+          <div className="border-2 border-dashed border-muted rounded-xl p-12 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-[#F3F4F6]/50 transition-colors">
+            <ImageIcon className="size-10 text-muted-foreground/60" />
+            <span className="text-sm text-muted-foreground font-medium">Pilih Foto (Maks 500kb)</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Submit Button */}
+      <Button className="w-full h-14 rounded-xl bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold text-lg gap-3 shadow-md transition-all active:scale-[0.98]">
+        <Save className="size-6" />
+        Simpan Data Laporan
+      </Button>
     </div>
   )
 }
