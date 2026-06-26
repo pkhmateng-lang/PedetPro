@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ClipboardList, Calendar as CalendarIcon, Image as ImageIcon, Save } from "lucide-react"
+import { ClipboardList, Calendar as CalendarIcon, Image as ImageIcon, Save, Plus } from "lucide-react"
 
 export default function HomePage() {
   const [puskeswan, setPuskeswan] = useState<string>("")
@@ -305,28 +305,32 @@ export default function HomePage() {
           </Card>
 
           <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Jenis Kelamin Anakan</Label>
-              <Select>
-                <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
-                  <SelectValue placeholder="Pilih Jenis Kelamin" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="jantan">Jantan</SelectItem>
-                  <SelectItem value="betina">Betina</SelectItem>
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Jumlah Anak</Label>
-              <Input 
-                type="number"
-                placeholder="Isi Jumlah Anak"
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-              />
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Jenis Kelamin Anakan</Label>
+                <Select>
+                  <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
+                    <SelectValue placeholder="Pilih Jenis Kelamin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="jantan">Jantan</SelectItem>
+                    <SelectItem value="betina">Betina</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Jumlah Anak</Label>
+                <Input 
+                  type="number"
+                  placeholder="Isi Jumlah Anak"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
+              <div className="flex justify-end pt-2">
+                <Button variant="ghost" size="icon" className="rounded-full bg-[#F3F4F6] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all shadow-sm">
+                  <Plus className="size-5" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
