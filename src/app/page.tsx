@@ -61,11 +61,21 @@ export default function HomePage() {
     "Lainnya"
   ]
 
+  const topoyoOfficers = [
+    "Alfons B",
+    "drh. Iqbal Djamil",
+    "Fitriani",
+    "Haslim",
+    "Rizky A",
+    "Lainnya"
+  ]
+
   const getOfficerList = () => {
     if (puskeswan === "puskeswan-budong-budong") return budongBudongOfficers
     if (puskeswan === "puskeswan-karossa") return karossaOfficers
     if (puskeswan === "puskeswan-pangale") return pangaleOfficers
     if (puskeswan === "puskeswan-tobadak") return tobadakOfficers
+    if (puskeswan === "puskeswan-topoyo") return topoyoOfficers
     return null
   }
 
