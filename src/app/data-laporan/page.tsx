@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react"
@@ -41,7 +40,7 @@ export default function DataLaporanPage() {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Puskeswan</Label>
+              <Label className="text-xs font-bold text-muted-foreground tracking-wider">Puskeswan</Label>
               <Select>
                 <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
                   <SelectValue placeholder="Semua Puskeswan" />
@@ -58,7 +57,7 @@ export default function DataLaporanPage() {
             </div>
             
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Petugas</Label>
+              <Label className="text-xs font-bold text-muted-foreground tracking-wider">Petugas</Label>
               <Select disabled>
                 <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
                   <SelectValue placeholder="Semua Petugas" />
@@ -70,7 +69,7 @@ export default function DataLaporanPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Bulan</Label>
+              <Label className="text-xs font-bold text-muted-foreground tracking-wider">Bulan</Label>
               <Select>
                 <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
                   <SelectValue placeholder="Semua Bulan" />
@@ -94,7 +93,7 @@ export default function DataLaporanPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Tahun</Label>
+              <Label className="text-xs font-bold text-muted-foreground tracking-wider">Tahun</Label>
               <Select>
                 <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 px-4 focus:ring-1 focus:ring-primary/20">
                   <SelectValue placeholder="Semua Tahun" />
