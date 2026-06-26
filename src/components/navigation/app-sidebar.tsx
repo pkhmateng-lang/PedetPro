@@ -3,40 +3,16 @@
 
 import * as React from "react"
 import { 
-  Layout, 
-  Users, 
-  ClipboardList, 
-  MapPin, 
-  Home, 
-  Settings,
-  PieChart
+  Layout
 } from "lucide-react"
 
 import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
 } from "@/components/ui/sidebar"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
 
 export function AppSidebar() {
-  const pathname = usePathname()
-
-  const items = [
-    { title: "Beranda", url: "/", icon: Home },
-    { title: "Data KPM", url: "/kpm", icon: Users },
-    { title: "Laporan Lapangan", url: "/laporan", icon: ClipboardList },
-    { title: "Wilayah", url: "/wilayah", icon: MapPin },
-    { title: "Statistik", url: "/statistik", icon: PieChart },
-  ]
-
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b px-4 py-6">
@@ -53,28 +29,6 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">Menu Utama</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    isActive={pathname === item.url}
-                    tooltip={item.title}
-                    className="hover:bg-secondary/20 data-[active=true]:bg-secondary/30 data-[active=true]:text-primary"
-                  >
-                    <Link href={item.url}>
-                      <item.icon className="size-5" />
-                      <span className="font-medium">{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   )
