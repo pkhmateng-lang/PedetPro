@@ -35,6 +35,16 @@ export default function DataLaporanPage() {
         <span className="text-[10px] font-bold text-[#064E3B] bg-white/80 px-2 py-0.5 rounded-full shadow-sm uppercase tracking-tighter">Home</span>
       </div>
 
+      {/* Page Title Card */}
+      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+        <CardContent className="p-8 space-y-2">
+          <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Data Laporan Kelahiran</h1>
+          <p className="text-muted-foreground font-medium">
+            Monitoring data kelahiran ternak dan hasil inseminasi buatan terpusat.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Header Grid Filters */}
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-6">
