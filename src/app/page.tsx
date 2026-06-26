@@ -83,8 +83,11 @@ export default function HomePage() {
               <SelectValue placeholder="Pilih Puskeswan" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="puskeswan-1">Puskeswan 1</SelectItem>
-              <SelectItem value="puskeswan-2">Puskeswan 2</SelectItem>
+              <SelectItem value="budong-budong">Puskeswan Budong-Budong</SelectItem>
+              <SelectItem value="karossa">Karossa</SelectItem>
+              <SelectItem value="pangale">Pangale</SelectItem>
+              <SelectItem value="tobadak">Tobadak</SelectItem>
+              <SelectItem value="topoyo">Topoyo</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
