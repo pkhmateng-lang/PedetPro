@@ -100,6 +100,55 @@ export default function HomePage() {
           />
         </CardContent>
       </Card>
+
+      {/* Farmer Name Card */}
+      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+        <CardContent className="p-6 space-y-4">
+          <Label className="text-sm font-bold text-foreground/80">Nama Peternak</Label>
+          <Input 
+            placeholder="Isi Nama Peternak"
+            className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Farmer Identity Card */}
+      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+        <CardContent className="p-6 space-y-4">
+          <Label className="text-sm font-bold text-foreground/80">Identitas Peternak (KTP / No.Hp)</Label>
+          <Input 
+            placeholder="Isi KTP atau No. Hp"
+            className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Farmer Address Card */}
+      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+        <CardContent className="p-6 space-y-4">
+          <Label className="text-sm font-bold text-foreground/80">Alamat Peternak</Label>
+          <Input 
+            placeholder="Isi Alamat Lengkap"
+            className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Breeding Type Card */}
+      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+        <CardContent className="p-6 space-y-4">
+          <Label className="text-sm font-bold text-foreground/80">Jenis Perkawinan Ternak</Label>
+          <Select defaultValue="kawin-alam">
+            <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
+              <SelectValue placeholder="Pilih Jenis Perkawinan" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="kawin-alam">Kawin Alam</SelectItem>
+              <SelectItem value="inseminasi-buatan">Inseminasi Buatan</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
     </div>
   )
 }
