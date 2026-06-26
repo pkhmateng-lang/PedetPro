@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Calendar as CalendarIcon, Image as ImageIcon, Save, Plus, Loader2 } from "lucide-react"
+import { Calendar as CalendarIcon, Save, Plus, Loader2 } from "lucide-react"
 import { useFirestore } from "@/firebase"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { errorEmitter } from "@/firebase/error-emitter"
@@ -27,7 +27,7 @@ export default function HomePage() {
   
   // Form States
   const [formData, setFormData] = useState({
-    serviceDate: "06/26/2026",
+    serviceDate: new Date().toLocaleDateString('en-US'),
     puskeswan: "",
     officerName: "",
     farmerName: "",
@@ -52,6 +52,11 @@ export default function HomePage() {
   }
 
   const handleSave = () => {
+    if (!formData.farmerName || !formData.puskeswan) {
+      alert("Harap isi Nama Peternak dan Puskeswan.");
+      return;
+    }
+
     setLoading(true)
     const reportsRef = collection(db, 'reports')
     
@@ -196,7 +201,7 @@ export default function HomePage() {
 
       <div className="space-y-6">
         <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-          <CardContent className="p-6">
+          <CardContent className="p-6 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="font-bold">Jenis Indukan</Label>
