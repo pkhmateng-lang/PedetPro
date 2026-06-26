@@ -2,6 +2,7 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import { Navbar } from '@/components/navigation/navbar';
 
 export const metadata: Metadata = {
   title: 'PKH Mateng | Management System',
@@ -22,6 +23,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-background text-foreground">
         <main className="min-h-screen p-6 md:p-8 max-w-[1400px] mx-auto">
+          <Navbar />
           {children}
         </main>
         <Toaster />

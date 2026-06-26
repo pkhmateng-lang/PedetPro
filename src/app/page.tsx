@@ -2,7 +2,6 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -14,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ClipboardList, Calendar as CalendarIcon, Image as ImageIcon, Save, Plus } from "lucide-react"
+import { Calendar as CalendarIcon, Image as ImageIcon, Save, Plus } from "lucide-react"
 
 export default function HomePage() {
   const [puskeswan, setPuskeswan] = useState<string>("")
@@ -26,7 +25,7 @@ export default function HomePage() {
     "Nur Fauzi",
     "Rahman",
     "Suprapto",
-    "Tadi Sole",
+    "Tadi Saleh",
     "Lainnya"
   ]
 
@@ -85,40 +84,6 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-12">
-      {/* Navigation Header Card */}
-      <Card className="border-none shadow-sm bg-white p-6 overflow-hidden">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="flex aspect-square size-12 items-center justify-center rounded-xl bg-[#FBBF24] text-black shadow-md">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-layout-grid"
-              >
-                <rect width="7" height="7" x="3" y="3" rx="1" />
-                <rect width="7" height="7" x="14" y="3" rx="1" />
-                <rect width="7" height="7" x="14" y="14" rx="1" />
-                <rect width="7" height="7" x="3" y="14" rx="1" />
-              </svg>
-            </div>
-            <h1 className="text-xl md:text-2xl font-headline font-bold text-[#064E3B]">PKH Mateng</h1>
-          </div>
-          <Link href="/data-laporan">
-            <Button variant="outline" className="rounded-xl border-[#064E3B] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all gap-2 px-6 font-bold shadow-sm">
-              <ClipboardList className="size-5" />
-              Data Lap.
-            </Button>
-          </Link>
-        </div>
-      </Card>
-
       {/* Form Header Card */}
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-8 space-y-2">
@@ -237,19 +202,21 @@ export default function HomePage() {
         {/* Indukan Section */}
         <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
           <CardContent className="p-6 space-y-6">
-            <div className="space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Jenis Indukan</Label>
-              <Input 
-                placeholder="Isi Jenis Indukan"
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-              />
-            </div>
-            <div className="space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">No. Eartag Induk</Label>
-              <Input 
-                placeholder="Isi No. Eartag Induk"
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Jenis Indukan</Label>
+                <Input 
+                  placeholder="Isi Jenis Indukan"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">No. Eartag Induk</Label>
+                <Input 
+                  placeholder="Isi No. Eartag Induk"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -257,33 +224,36 @@ export default function HomePage() {
         {/* Pejantan Section */}
         <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
           <CardContent className="p-6 space-y-6">
-            <div className="space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Jenis Pejantan</Label>
-              <Input 
-                placeholder={breedingType === 'inseminasi-buatan' ? "Isi Jenis Pejantan atau Kode Straw" : "Isi Jenis Pejantan"}
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Jenis Pejantan</Label>
+                <Input 
+                  placeholder="Isi Jenis Pejantan"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">No. Eartag Pejantan</Label>
+                <Input 
+                  placeholder="Isi No. Eartag Pejantan"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
             </div>
-            <div className="space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">No. Eartag Pejantan</Label>
-              <Input 
-                placeholder="Isi No. Eartag Pejantan"
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-              />
-            </div>
+            
             {breedingType === 'inseminasi-buatan' && (
-              <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-dashed">
                 <div className="space-y-4">
                   <Label className="text-sm font-bold text-foreground/80">Id Straw Pejantan</Label>
                   <Input 
-                    placeholder="Isi Id Straw Pejantan"
+                    placeholder="Isi Id Straw"
                     className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
                   />
                 </div>
                 <div className="space-y-4">
                   <Label className="text-sm font-bold text-foreground/80">Id Batch Straw</Label>
                   <Input 
-                    placeholder="Isi Id Batch Straw"
+                    placeholder="Isi Batch Straw"
                     className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
                   />
                 </div>
@@ -291,7 +261,7 @@ export default function HomePage() {
                   <Label className="text-sm font-bold text-foreground/80">Produsen Straw</Label>
                   <Select>
                     <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
-                      <SelectValue placeholder="Pilih Produsen Straw" />
+                      <SelectValue placeholder="Pilih Produsen" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="bib-lembang">BIB Lembang</SelectItem>
@@ -300,7 +270,7 @@ export default function HomePage() {
                     </SelectContent>
                   </Select>
                 </div>
-              </>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -308,26 +278,28 @@ export default function HomePage() {
         {/* Date Section */}
         <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
           <CardContent className="p-6 space-y-6">
-            <div className="space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">{breedingType === 'inseminasi-buatan' ? 'Tanggal IB (Inseminasi)' : 'Tanggal Perkawinan'}</Label>
-              <div className="relative">
-                <Input 
-                  type="text" 
-                  placeholder={breedingType === 'inseminasi-buatan' ? "Pilih Tanggal IB" : "Pilih Tanggal Perkawinan"}
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 pr-10 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-                <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">{breedingType === 'inseminasi-buatan' ? 'Tanggal IB (Inseminasi)' : 'Tanggal Perkawinan'}</Label>
+                <div className="relative">
+                  <Input 
+                    type="text" 
+                    placeholder="Pilih Tanggal"
+                    className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 pr-10 focus-visible:ring-1 focus-visible:ring-primary/20"
+                  />
+                  <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                </div>
               </div>
-            </div>
-            <div className="space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Tanggal Lahir</Label>
-              <div className="relative">
-                <Input 
-                  type="text" 
-                  placeholder="Pilih Tanggal Lahir"
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 pr-10 focus-visible:ring-1 focus-visible:ring-primary/20"
-                />
-                <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Tanggal Lahir</Label>
+                <div className="relative">
+                  <Input 
+                    type="text" 
+                    placeholder="Pilih Tanggal Lahir"
+                    className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 pr-10 focus-visible:ring-1 focus-visible:ring-primary/20"
+                  />
+                  <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                </div>
               </div>
             </div>
           </CardContent>
@@ -336,25 +308,27 @@ export default function HomePage() {
         {/* Offspring Section */}
         <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
           <CardContent className="p-6 space-y-6">
-            <div className="space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Jenis Kelamin Anakan</Label>
-              <Select>
-                <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
-                  <SelectValue placeholder="Pilih Jenis Kelamin" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="jantan">Jantan</SelectItem>
-                  <SelectItem value="betina">Betina</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Jumlah Anak</Label>
-              <Input 
-                type="number"
-                placeholder="Isi Jumlah Anak"
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Jenis Kelamin Anakan</Label>
+                <Select>
+                  <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20">
+                    <SelectValue placeholder="Pilih Jenis Kelamin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="jantan">Jantan</SelectItem>
+                    <SelectItem value="betina">Betina</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Jumlah Anak</Label>
+                <Input 
+                  type="number"
+                  placeholder="Isi Jumlah Anak"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
             </div>
             <div className="flex justify-end pt-2">
               <Button variant="ghost" size="icon" className="rounded-full bg-[#F3F4F6] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all shadow-sm">
