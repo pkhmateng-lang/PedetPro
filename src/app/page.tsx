@@ -78,15 +78,9 @@ export default function HomePage() {
       createdAt: serverTimestamp(),
     }
 
+    // Initiate the write operation and immediately navigate for a smooth, "instant" feel.
+    // Firestore's local cache ensures the data appears immediately on the next page.
     addDoc(reportsRef, payload)
-      .then(() => {
-        toast({
-          title: "Berhasil Disimpan",
-          description: "Laporan kelahiran telah berhasil ditambahkan ke sistem.",
-        })
-        // Smoothly navigate to reports page
-        router.push('/data-laporan')
-      })
       .catch(async (err) => {
         const permissionError = new FirestorePermissionError({
           path: reportsRef.path,
@@ -94,13 +88,18 @@ export default function HomePage() {
           requestResourceData: payload,
         });
         errorEmitter.emit('permission-error', permissionError);
-        setLoading(false)
-        toast({
-          variant: "destructive",
-          title: "Gagal Menyimpan",
-          description: "Terjadi kesalahan saat menyimpan data. Silakan coba lagi.",
-        })
-      })
+        console.error("Firestore save error:", err);
+      });
+
+    // We don't await the addDoc here to provide a faster UI response.
+    // The redirect happens immediately after the write is queued.
+    toast({
+      title: "Data Sedang Disimpan",
+      description: "Laporan kelahiran Anda sedang diproses dan akan segera muncul.",
+    })
+    
+    // Immediate navigation to the data table
+    router.push('/data-laporan')
   }
 
   const budongBudongOfficers = ["Anshari Saleh", "Hadi", "Nur Fauzi", "Rahman", "Suprapto", "Tadi Saleh", "Lainnya"]
@@ -121,7 +120,7 @@ export default function HomePage() {
   const currentOfficers = getOfficerList()
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-12">
+    <div className="space-y-6 animate-in fade-in duration-700 max-w-6xl mx-auto pb-12">
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-8 space-y-2">
           <h2 className="text-3xl font-headline font-bold text-[#064E3B]">Laporan Kelahiran</h2>
