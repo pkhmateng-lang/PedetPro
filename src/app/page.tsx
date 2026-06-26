@@ -239,42 +239,40 @@ export default function HomePage() {
       {breedingType === "kawin-alam" && (
         <div className="space-y-6 animate-in slide-in-from-top-2 duration-300">
           <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Jenis Indukan</Label>
-              <Input 
-                placeholder="Isi Jenis Indukan"
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-              />
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Jenis Indukan</Label>
+                <Input 
+                  placeholder="Isi Jenis Indukan"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">No. Eartag Induk</Label>
+                <Input 
+                  placeholder="Isi No. Eartag Induk"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
             </CardContent>
           </Card>
 
           <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">No. Eartag Induk</Label>
-              <Input 
-                placeholder="Isi No. Eartag Induk"
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-              />
-            </CardContent>
-          </Card>
-
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">Jenis Pejantan</Label>
-              <Input 
-                placeholder="Isi Jenis Pejantan"
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-              />
-            </CardContent>
-          </Card>
-
-          <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-            <CardContent className="p-6 space-y-4">
-              <Label className="text-sm font-bold text-foreground/80">No. Eartag Pejantan</Label>
-              <Input 
-                placeholder="Isi No. Eartag Pejantan"
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
-              />
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Jenis Pejantan</Label>
+                <Input 
+                  placeholder="Isi Jenis Pejantan"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">No. Eartag Pejantan</Label>
+                <Input 
+                  placeholder="Isi No. Eartag Pejantan"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
             </CardContent>
           </Card>
 
