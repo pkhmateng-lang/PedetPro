@@ -1,13 +1,11 @@
 
 import type {Metadata} from 'next';
 import './globals.css';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/navigation/app-sidebar';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Tabula | Intelligent Development Workspace',
-  description: 'An AI-powered environment for rapid page blueprinting and UI scaffolding.',
+  title: 'PKH Mateng | Management System',
+  description: 'Sistem Pengelolaan Data PKH Kabupaten Mamuju Tengah',
 };
 
 export default function RootLayout({
@@ -23,16 +21,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=Source+Code+Pro&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased bg-background text-foreground">
-        <SidebarProvider>
-          <div className="flex min-h-screen w-full">
-            <AppSidebar />
-            <SidebarInset className="flex-1 flex flex-col min-w-0 overflow-hidden">
-              <main className="flex-1 overflow-y-auto p-6 md:p-8">
-                {children}
-              </main>
-            </SidebarInset>
-          </div>
-        </SidebarProvider>
+        <main className="min-h-screen p-6 md:p-8 max-w-[1400px] mx-auto">
+          {children}
+        </main>
         <Toaster />
       </body>
     </html>
