@@ -374,6 +374,27 @@ export default function HomePage() {
                   className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
                 />
               </div>
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Id Straw Pejantan</Label>
+                <Input 
+                  placeholder="Isi Id Straw Pejantan"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Id Batch Straw</Label>
+                <Input 
+                  placeholder="Isi Id Batch Straw"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
+              <div className="space-y-4">
+                <Label className="text-sm font-bold text-foreground/80">Produsen Straw</Label>
+                <Input 
+                  placeholder="Isi Produsen Straw"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-primary/20"
+                />
+              </div>
             </CardContent>
           </Card>
 
