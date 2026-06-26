@@ -84,10 +84,10 @@ export default function HomePage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="budong-budong">Puskeswan Budong-Budong</SelectItem>
-              <SelectItem value="karossa">Karossa</SelectItem>
-              <SelectItem value="pangale">Pangale</SelectItem>
-              <SelectItem value="tobadak">Tobadak</SelectItem>
-              <SelectItem value="topoyo">Topoyo</SelectItem>
+              <SelectItem value="karossa">Puskeswan Karossa</SelectItem>
+              <SelectItem value="pangale">Puskeswan Pangale</SelectItem>
+              <SelectItem value="tobadak">Puskeswan Tobadak</SelectItem>
+              <SelectItem value="topoyo">Puskeswan Topoyo</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
