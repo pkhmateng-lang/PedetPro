@@ -45,7 +45,7 @@ export default function DataLaporanPage() {
       const searchStr = ((r.farmerName || "") + (r.officerName || "") + (r.farmerAddress || "") + (r.damEartag || "")).toLowerCase()
       const matchSearch = searchStr.includes(searchQuery.toLowerCase())
       const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
-      return matchSearch && matchPuskeswan
+      return matchSearch && matchPuswan
     })
   }, [reports, searchQuery, filterPuskeswan])
 
@@ -183,7 +183,7 @@ export default function DataLaporanPage() {
                   ) : (
                     <TableRow>
                       <TableCell colSpan={5} className="text-center py-20 text-muted-foreground italic">
-                        kenapa data selalu hilang atau tidak tampil secara permanen di sini
+                        lagi lagi data yang saya sudah input hilang tidak tampil di table ini
                       </TableCell>
                     </TableRow>
                   )}
