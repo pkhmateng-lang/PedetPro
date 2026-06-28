@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -26,6 +26,12 @@ export default function DataLaporanPage() {
   const [view, setView] = useState<'tabel' | 'statistik'>('tabel')
   const [searchQuery, setSearchQuery] = useState("")
   const [filterPuskeswan, setFilterPuskeswan] = useState("all")
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Memastikan komponen telah terpasang di klien untuk menghindari Hydration Error
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Menstabilkan referensi query untuk mencegah re-render tak terbatas
   const reportsQuery = useMemoFirebase(() => {
@@ -65,7 +71,9 @@ export default function DataLaporanPage() {
           <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Pusat Laporan</h1>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Database className="size-4" />
-            <span className="text-sm font-medium">Status Koneksi: {db ? "Terhubung ke Firestore" : "Menghubungkan..."}</span>
+            <span className="text-sm font-medium">
+              Status Koneksi: {isMounted && db ? "Terhubung ke Firestore" : "Menghubungkan..."}
+            </span>
           </div>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
@@ -178,8 +186,8 @@ export default function DataLaporanPage() {
                     <TableRow>
                       <TableCell colSpan={5} className="text-center py-20 text-muted-foreground">
                         <div className="flex flex-col items-center gap-2">
-                          <p className="italic">Belum ada riwayat laporan yang ditemukan di database Firestore.</p>
-                          <p className="text-xs">Jika Anda baru saja menginput, pastikan koneksi internet stabil dan kunci API valid.</p>
+                          <p className="italic font-body">Belum ada riwayat laporan yang ditemukan di database Firestore.</p>
+                          <p className="text-xs">Jika Anda baru saja menginput, pastikan koneksi internet stabil.</p>
                         </div>
                       </TableCell>
                     </TableRow>
