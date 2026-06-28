@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Save, Plus, Loader2 } from "lucide-react"
+import { Save, Plus, Loader2, Calendar } from "lucide-react"
 import { useFirestore } from "@/firebase"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { errorEmitter } from "@/firebase/error-emitter"
@@ -29,6 +29,7 @@ export default function HomePage() {
   
   // Form States
   const [formData, setFormData] = useState({
+    reportDate: "",
     puskeswan: "",
     officerName: "",
     farmerName: "",
@@ -47,11 +48,13 @@ export default function HomePage() {
     offspringCount: 1,
   })
 
-  // Set default birth date to today on client mount
+  // Set default dates to today on client mount
   useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
     setFormData(prev => ({
       ...prev,
-      birthDate: new Date().toISOString().split('T')[0]
+      birthDate: today,
+      reportDate: today
     }))
   }, [])
 
@@ -78,7 +81,6 @@ export default function HomePage() {
     }
 
     // FAST RESPONSE: Initiate write and immediately redirect.
-    // Firestore handles background sync and local cache updates.
     addDoc(reportsRef, payload)
       .catch(async (err) => {
         const permissionError = new FirestorePermissionError({
@@ -93,10 +95,10 @@ export default function HomePage() {
     // Immediate feedback and navigation
     toast({
       title: "Laporan Terkirim",
-      description: "Data sedang diproses. Mengalihkan ke riwayat...",
+      description: "Data sedang diproses secara permanen. Mengalihkan ke riwayat...",
     })
     
-    // Immediate transition for best user experience
+    // Instant transition for smooth UX
     router.push('/data-laporan')
   }
 
@@ -123,6 +125,21 @@ export default function HomePage() {
         <CardContent className="p-8 space-y-2">
           <h2 className="text-3xl font-headline font-bold text-[#064E3B]">Form Laporan Kelahiran</h2>
           <p className="text-muted-foreground font-medium">Input detail kelahiran ternak untuk arsip riwayat pusat.</p>
+        </CardContent>
+      </Card>
+
+      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+        <CardContent className="p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Calendar className="size-5 text-[#064E3B]" />
+            <Label className="text-sm font-bold text-foreground/80">Tanggal Laporan</Label>
+          </div>
+          <Input 
+            type="date" 
+            value={formData.reportDate} 
+            onChange={(e) => updateField('reportDate', e.target.value)} 
+            className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 shadow-inner focus-visible:ring-1 focus-visible:ring-[#064E3B]/20" 
+          />
         </CardContent>
       </Card>
 
@@ -164,7 +181,7 @@ export default function HomePage() {
                 placeholder="Isi Nama Petugas Manual"
                 value={formData.officerName}
                 onChange={(e) => updateField('officerName', e.target.value)}
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4"
+                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 shadow-inner"
               />
             )}
           </CardContent>
@@ -176,16 +193,16 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label className="text-sm font-bold text-foreground/80">Nama Peternak</Label>
-              <Input placeholder="Isi Nama Peternak" value={formData.farmerName} onChange={(e) => updateField('farmerName', e.target.value)} className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4" />
+              <Input placeholder="Isi Nama Peternak" value={formData.farmerName} onChange={(e) => updateField('farmerName', e.target.value)} className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 shadow-inner" />
             </div>
             <div className="space-y-2">
               <Label className="text-sm font-bold text-foreground/80">KTP / No.Hp</Label>
-              <Input placeholder="Isi KTP atau No. Hp" value={formData.farmerId} onChange={(e) => updateField('farmerId', e.target.value)} className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4" />
+              <Input placeholder="Isi KTP atau No. Hp" value={formData.farmerId} onChange={(e) => updateField('farmerId', e.target.value)} className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 shadow-inner" />
             </div>
           </div>
           <div className="space-y-2">
             <Label className="text-sm font-bold text-foreground/80">Alamat Peternak</Label>
-            <Input placeholder="Isi Alamat Lengkap" value={formData.farmerAddress} onChange={(e) => updateField('farmerAddress', e.target.value)} className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4" />
+            <Input placeholder="Isi Alamat Lengkap" value={formData.farmerAddress} onChange={(e) => updateField('farmerAddress', e.target.value)} className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 shadow-inner" />
           </div>
         </CardContent>
       </Card>
@@ -211,11 +228,11 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="font-bold">Jenis Indukan</Label>
-                <Input placeholder="Isi Jenis Indukan" value={formData.damBreed} onChange={(e) => updateField('damBreed', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
+                <Input placeholder="Isi Jenis Indukan" value={formData.damBreed} onChange={(e) => updateField('damBreed', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12 shadow-inner" />
               </div>
               <div className="space-y-2">
                 <Label className="font-bold">No. Eartag Induk</Label>
-                <Input placeholder="Isi No. Eartag Induk" value={formData.damEartag} onChange={(e) => updateField('damEartag', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
+                <Input placeholder="Isi No. Eartag Induk" value={formData.damEartag} onChange={(e) => updateField('damEartag', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12 shadow-inner" />
               </div>
             </div>
           </CardContent>
@@ -226,11 +243,11 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="font-bold">Jenis Pejantan</Label>
-                <Input placeholder="Isi Jenis Pejantan" value={formData.sireBreed} onChange={(e) => updateField('sireBreed', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
+                <Input placeholder="Isi Jenis Pejantan" value={formData.sireBreed} onChange={(e) => updateField('sireBreed', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12 shadow-inner" />
               </div>
               <div className="space-y-2">
                 <Label className="font-bold">No. Eartag Pejantan</Label>
-                <Input placeholder="Isi No. Eartag Pejantan" value={formData.sireEartag} onChange={(e) => updateField('sireEartag', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
+                <Input placeholder="Isi No. Eartag Pejantan" value={formData.sireEartag} onChange={(e) => updateField('sireEartag', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12 shadow-inner" />
               </div>
             </div>
 
@@ -238,11 +255,11 @@ export default function HomePage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-dashed">
                 <div className="space-y-2">
                   <Label className="font-bold">Id Straw Pejantan</Label>
-                  <Input placeholder="Id Straw" value={formData.strawId} onChange={(e) => updateField('strawId', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
+                  <Input placeholder="Id Straw" value={formData.strawId} onChange={(e) => updateField('strawId', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12 shadow-inner" />
                 </div>
                 <div className="space-y-2">
                   <Label className="font-bold">Id Batch Straw</Label>
-                  <Input placeholder="Id Batch" value={formData.batchId} onChange={(e) => updateField('batchId', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
+                  <Input placeholder="Id Batch" value={formData.batchId} onChange={(e) => updateField('batchId', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12 shadow-inner" />
                 </div>
                 <div className="space-y-2">
                   <Label className="font-bold">Produsen Straw</Label>
@@ -266,7 +283,7 @@ export default function HomePage() {
           <CardContent className="p-6">
             <div className="space-y-2">
               <Label className="font-bold">Tanggal Lahir</Label>
-              <Input type="date" value={formData.birthDate} onChange={(e) => updateField('birthDate', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
+              <Input type="date" value={formData.birthDate} onChange={(e) => updateField('birthDate', e.target.value)} className="bg-[#F3F4F6] border-none rounded-xl h-12 shadow-inner" />
             </div>
           </CardContent>
         </Card>
@@ -288,7 +305,7 @@ export default function HomePage() {
               </div>
               <div className="space-y-2">
                 <Label className="font-bold">Jumlah Anak</Label>
-                <Input type="number" min="1" value={formData.offspringCount} onChange={(e) => updateField('offspringCount', parseInt(e.target.value) || 1)} className="bg-[#F3F4F6] border-none rounded-xl h-12" />
+                <Input type="number" min="1" value={formData.offspringCount} onChange={(e) => updateField('offspringCount', parseInt(e.target.value) || 1)} className="bg-[#F3F4F6] border-none rounded-xl h-12 shadow-inner" />
               </div>
             </div>
             <Button variant="ghost" size="icon" className="absolute bottom-6 right-6 rounded-full bg-[#F3F4F6] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all">
