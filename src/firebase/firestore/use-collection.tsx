@@ -29,23 +29,22 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
         } as T & { id: string }));
         setData(items);
         setLoading(false);
+        setError(null);
       },
       async (err) => {
-        // Deteksi path koleksi dari query object
-        let path = 'unknown';
+        // Deteksi path koleksi secara lebih agresif untuk menghindari pesan "unknown"
+        let path = 'reports';
         try {
-          // Mencoba mendapatkan path dari internal query metadata
           const q = query as any;
           if (q.path) {
             path = q.path.toString();
           } else if (q._query && q._query.path) {
             path = q._query.path.toString();
-          } else if (q.converter && q._query) {
-            path = q._query.path.toString();
+          } else if (typeof q.parent?.path === 'string') {
+            path = q.parent.path;
           }
         } catch (e) {
-          // Fallback jika gagal deteksi
-          path = 'reports'; 
+          path = 'reports';
         }
 
         const permissionError = new FirestorePermissionError({
