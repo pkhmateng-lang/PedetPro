@@ -5,6 +5,7 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getAuth, Auth } from 'firebase/auth';
 import { firebaseConfig } from './config';
+import { useMemo, useRef } from 'react';
 
 let app: FirebaseApp;
 let firestore: Firestore;
@@ -35,6 +36,15 @@ export function initializeFirebase() {
   }
 
   return { app, firestore, auth };
+}
+
+/**
+ * A specialized memoization hook for Firebase references and queries.
+ * Ensures that the reference is only re-created when its dependencies change,
+ * preventing infinite re-render loops in Firestore hooks.
+ */
+export function useMemoFirebase<T>(factory: () => T, deps: any[]): T {
+  return useMemo(factory, deps);
 }
 
 export * from './provider';

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select"
 import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2, MapPin, Calendar } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useFirestore, useCollection } from "@/firebase"
+import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, orderBy } from "firebase/firestore"
 import { format } from "date-fns"
 
@@ -26,9 +26,10 @@ export default function DataLaporanPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [filterPuskeswan, setFilterPuskeswan] = useState("all")
 
-  // UseCollection hook to fetch all reports from the 'reports' collection real-time.
-  // This ensures data is persistent and synced for all users.
-  const reportsQuery = useMemo(() => {
+  // UseMemoFirebase ensures that the query is only created when db is available 
+  // and doesn't trigger infinite loops during SSR or re-renders.
+  const reportsQuery = useMemoFirebase(() => {
+    if (!db) return null;
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
   }, [db])
 
@@ -37,10 +38,10 @@ export default function DataLaporanPage() {
   const filteredReports = useMemo(() => {
     if (!reports) return []
     return reports.filter(r => {
-      const searchStr = (r.farmerName + r.officerName + r.farmerAddress + r.damEartag).toLowerCase()
+      const searchStr = ((r.farmerName || "") + (r.officerName || "") + (r.farmerAddress || "") + (r.damEartag || "")).toLowerCase()
       const matchSearch = searchStr.includes(searchQuery.toLowerCase())
       const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
-      return matchSearch && matchPuskeswan
+      return matchSearch && matchPuswan
     })
   }, [reports, searchQuery, filterPuskeswan])
 
