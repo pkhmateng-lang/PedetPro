@@ -31,18 +31,19 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
         setLoading(false);
       },
       async (err) => {
-        // Mencoba mendapatkan path dari query untuk pelaporan error yang lebih baik
+        // Mendapatkan path koleksi secara eksplisit jika memungkinkan
         let path = 'unknown';
         try {
-          // Pada JS SDK, path sering kali tersembunyi di internal query object
-          const internalQuery = (query as any)._query || query;
-          if (internalQuery.path) {
-            path = internalQuery.path.toString();
-          } else if (internalQuery.collection) {
-            path = internalQuery.collection.path;
+          // JS SDK Query objects usually have a path or reference
+          const q = query as any;
+          if (q.path) {
+            path = q.path.toString();
+          } else if (q._query && q._query.path) {
+            path = q._query.path.toString();
           }
         } catch (e) {
-          path = 'reports'; // Fallback spesifik untuk aplikasi ini
+          // Fallback ke koleksi utama aplikasi ini
+          path = 'reports'; 
         }
 
         const permissionError = new FirestorePermissionError({
