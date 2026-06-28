@@ -31,18 +31,20 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
         setLoading(false);
       },
       async (err) => {
-        // Mendapatkan path koleksi secara eksplisit jika memungkinkan
+        // Deteksi path koleksi dari query object
         let path = 'unknown';
         try {
-          // JS SDK Query objects usually have a path or reference
+          // Mencoba mendapatkan path dari internal query metadata
           const q = query as any;
           if (q.path) {
             path = q.path.toString();
           } else if (q._query && q._query.path) {
             path = q._query.path.toString();
+          } else if (q.converter && q._query) {
+            path = q._query.path.toString();
           }
         } catch (e) {
-          // Fallback ke koleksi utama aplikasi ini
+          // Fallback jika gagal deteksi
           path = 'reports'; 
         }
 
