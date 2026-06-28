@@ -26,8 +26,7 @@ export default function DataLaporanPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [filterPuskeswan, setFilterPuskeswan] = useState("all")
 
-  // UseMemoFirebase ensures that the query is only created when db is available 
-  // and doesn't trigger infinite loops during SSR or re-renders.
+  // Menstabilkan referensi query untuk mencegah re-render tak terbatas
   const reportsQuery = useMemoFirebase(() => {
     if (!db) return null;
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
@@ -41,12 +40,13 @@ export default function DataLaporanPage() {
       const searchStr = ((r.farmerName || "") + (r.officerName || "") + (r.farmerAddress || "") + (r.damEartag || "")).toLowerCase()
       const matchSearch = searchStr.includes(searchQuery.toLowerCase())
       const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
-      return matchSearch && matchPuswan
+      return matchSearch && matchPuskeswan // Memperbaiki typo matchPuswan menjadi matchPuskeswan
     })
   }, [reports, searchQuery, filterPuskeswan])
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-12 relative">
+      {/* Tombol melayang untuk navigasi kembali ke tambah data */}
       <div className="fixed left-6 bottom-10 z-[60] flex flex-col items-center gap-2">
         <Link href="/">
           <Button 
@@ -64,7 +64,7 @@ export default function DataLaporanPage() {
         <CardContent className="p-8 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Riwayat Laporan Kelahiran</h1>
-            <p className="text-muted-foreground font-medium">Data pusat yang dapat dipantau oleh seluruh petugas secara transparan.</p>
+            <p className="text-muted-foreground font-medium">Data pusat yang tersimpan secara permanen dan real-time.</p>
           </div>
           <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 h-12 px-6 shadow-md transition-all active:scale-95">
             <Download className="size-5" />
@@ -174,7 +174,7 @@ export default function DataLaporanPage() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground italic">Belum ada riwayat laporan yang tersimpan.</TableCell>
+                      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground italic">Belum ada riwayat laporan yang ditemukan.</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -183,7 +183,7 @@ export default function DataLaporanPage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-32 space-y-4">
               <BarChart3 className="size-16 text-muted-foreground/20" />
-              <p className="text-muted-foreground font-medium">Analisis statistik data riwayat sedang disiapkan.</p>
+              <p className="text-muted-foreground font-medium">Analisis statistik sedang disiapkan berdasarkan data permanen.</p>
             </div>
           )}
         </CardContent>

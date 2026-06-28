@@ -48,6 +48,7 @@ export default function HomePage() {
   })
 
   useEffect(() => {
+    // Set default tanggal hari ini saat komponen pertama kali dimuat
     const today = new Date().toISOString().split('T')[0]
     setFormData(prev => ({
       ...prev,
@@ -78,8 +79,8 @@ export default function HomePage() {
       createdAt: serverTimestamp(),
     }
 
-    // FAST RESPONSE: Initiate write and immediately redirect.
-    // Firestore handles background sync even if navigation happens.
+    // FAST RESPONSE: Kirim data ke background dan langsung navigasi.
+    // Optimistic concurrency memastikan UX terasa instan.
     addDoc(reportsRef, payload)
       .catch(async (err) => {
         const permissionError = new FirestorePermissionError({
@@ -92,10 +93,10 @@ export default function HomePage() {
 
     toast({
       title: "Laporan Terkirim",
-      description: "Data sedang disimpan secara permanen di database pusat.",
+      description: "Data sedang diproses untuk penyimpanan permanen.",
     })
     
-    // Immediate navigation for smooth UX
+    // Navigasi instan
     router.push('/data-laporan')
   }
 
@@ -121,7 +122,7 @@ export default function HomePage() {
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-8 space-y-2">
           <h2 className="text-3xl font-headline font-bold text-[#064E3B]">Form Laporan Kelahiran</h2>
-          <p className="text-muted-foreground font-medium">Input detail kelahiran ternak untuk arsip riwayat pusat.</p>
+          <p className="text-muted-foreground font-medium">Input detail kelahiran ternak untuk arsip permanen pusat.</p>
         </CardContent>
       </Card>
 
@@ -135,7 +136,7 @@ export default function HomePage() {
             type="date" 
             value={formData.reportDate} 
             onChange={(e) => updateField('reportDate', e.target.value)} 
-            className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 shadow-inner focus-visible:ring-1 focus-visible:ring-[#064E3B]/20" 
+            className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 shadow-inner" 
           />
         </CardContent>
       </Card>
@@ -175,10 +176,9 @@ export default function HomePage() {
               </Select>
             ) : (
               <Input 
-                placeholder="Isi Nama Petugas Manual"
-                value={formData.officerName}
-                onChange={(e) => updateField('officerName', e.target.value)}
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 shadow-inner"
+                placeholder="Pilih Puskeswan terlebih dahulu"
+                disabled
+                className="w-full bg-[#F3F4F6]/50 border-none rounded-xl h-12 px-4"
               />
             )}
           </CardContent>
@@ -285,7 +285,7 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
-        <Card className="border border-border/50 shadow-sm bg-white overflow-hidden relative">
+        <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -313,16 +313,16 @@ export default function HomePage() {
         <Button 
           disabled={loading}
           onClick={handleSave}
-          className="h-12 px-10 rounded-xl bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold gap-3 shadow-lg transition-all active:scale-[0.98] w-full md:w-auto"
+          className="h-14 px-12 rounded-xl bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold gap-3 shadow-[0_10px_30px_-10px_rgba(6,78,59,0.4)] transition-all active:scale-[0.98] w-full md:w-auto text-lg"
         >
           {loading ? (
             <>
-              <Loader2 className="animate-spin size-5" />
+              <Loader2 className="animate-spin size-6" />
               Menyimpan...
             </>
           ) : (
             <>
-              <Save className="size-5" />
+              <Save className="size-6" />
               Simpan Data Laporan
             </>
           )}
