@@ -6,7 +6,8 @@ import {
   Query, 
   onSnapshot, 
   QuerySnapshot, 
-  DocumentData 
+  DocumentData,
+  CollectionReference
 } from 'firebase/firestore';
 import { errorEmitter } from '../error-emitter';
 import { FirestorePermissionError } from '../errors';
@@ -30,10 +31,23 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
         setLoading(false);
       },
       async (err) => {
+        // Mencoba mendapatkan path dari query untuk pelaporan error yang lebih baik
+        let path = 'unknown';
+        try {
+          if ((query as any).path) {
+            path = (query as any).path;
+          } else if ((query as any)._query?.path?.segments) {
+            path = (query as any)._query.path.segments.join('/');
+          }
+        } catch (e) {
+          path = 'reports'; // Default fallback untuk aplikasi ini
+        }
+
         const permissionError = new FirestorePermissionError({
-          path: (query as any).path || 'unknown',
+          path: path,
           operation: 'list',
         });
+        
         errorEmitter.emit('permission-error', permissionError);
         setError(err);
         setLoading(false);
