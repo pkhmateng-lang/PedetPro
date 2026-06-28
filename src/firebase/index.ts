@@ -5,28 +5,24 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getAuth, Auth } from 'firebase/auth';
 import { firebaseConfig } from './config';
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 
 let app: FirebaseApp;
 let firestore: Firestore;
 let auth: Auth;
 
 /**
- * Initializes Firebase services if they haven't been initialized yet.
- * Returns the app, firestore, and auth instances.
+ * Inisialisasi layanan Firebase.
+ * Memastikan Firebase hanya berjalan di sisi klien (browser) untuk menghindari error SSR.
  */
 export function initializeFirebase() {
-  // Ensure Firebase is only initialized once and only on the client side
   if (typeof window !== 'undefined') {
     if (!getApps().length) {
-      // If no apps exist, initialize a new one with the config
       app = initializeApp(firebaseConfig);
     } else {
-      // Otherwise, use the existing app
       app = getApp();
     }
     
-    // Initialize services as singletons
     if (!firestore) {
       firestore = getFirestore(app);
     }
@@ -39,9 +35,8 @@ export function initializeFirebase() {
 }
 
 /**
- * A specialized memoization hook for Firebase references and queries.
- * Ensures that the reference is only re-created when its dependencies change,
- * preventing infinite re-render loops in Firestore hooks.
+ * Hook memoisasi untuk referensi Firebase.
+ * Penting untuk mencegah loop render pada hook Firestore.
  */
 export function useMemoFirebase<T>(factory: () => T, deps: any[]): T {
   return useMemo(factory, deps);

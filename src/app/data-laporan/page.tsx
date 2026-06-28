@@ -14,11 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2, MapPin, Calendar } from "lucide-react"
+import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2, MapPin, Calendar, Database } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, orderBy } from "firebase/firestore"
 import { format } from "date-fns"
+import { Badge } from "@/components/ui/badge"
 
 export default function DataLaporanPage() {
   const db = useFirestore()
@@ -32,7 +33,7 @@ export default function DataLaporanPage() {
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
   }, [db])
 
-  const { data: reports, loading } = useCollection(reportsQuery)
+  const { data: reports, loading, error } = useCollection(reportsQuery)
 
   const filteredReports = useMemo(() => {
     if (!reports) return []
@@ -40,13 +41,12 @@ export default function DataLaporanPage() {
       const searchStr = ((r.farmerName || "") + (r.officerName || "") + (r.farmerAddress || "") + (r.damEartag || "")).toLowerCase()
       const matchSearch = searchStr.includes(searchQuery.toLowerCase())
       const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
-      return matchSearch && matchPuskeswan // Memperbaiki typo matchPuswan menjadi matchPuskeswan
+      return matchSearch && matchPuskeswan
     })
   }, [reports, searchQuery, filterPuskeswan])
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-12 relative">
-      {/* Tombol melayang untuk navigasi kembali ke tambah data */}
       <div className="fixed left-6 bottom-10 z-[60] flex flex-col items-center gap-2">
         <Link href="/">
           <Button 
@@ -60,18 +60,24 @@ export default function DataLaporanPage() {
         <span className="text-[10px] font-bold text-[#064E3B] bg-white/80 px-2 py-0.5 rounded-full shadow-sm uppercase tracking-tighter">Tambah Laporan</span>
       </div>
 
-      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-        <CardContent className="p-8 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Riwayat Laporan Kelahiran</h1>
-            <p className="text-muted-foreground font-medium">Data pusat yang tersimpan secara permanen dan real-time.</p>
+      <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Pusat Laporan</h1>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Database className="size-4" />
+            <span className="text-sm font-medium">Status Koneksi: {db ? "Terhubung ke Firestore" : "Menghubungkan..."}</span>
           </div>
-          <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 h-12 px-6 shadow-md transition-all active:scale-95">
+        </div>
+        <div className="flex gap-3 w-full md:w-auto">
+           <Badge variant="outline" className="h-10 px-4 border-[#064E3B] text-[#064E3B] bg-white font-bold">
+            Total: {reports?.length || 0} Data
+           </Badge>
+           <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 flex-1 md:flex-none">
             <Download className="size-5" />
-            Unduh Laporan
+            Ekspor
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-6">
@@ -93,11 +99,11 @@ export default function DataLaporanPage() {
               </Select>
             </div>
             <div className="md:col-span-2 space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">Cari Data</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Cari Peternak/Eartag</Label>
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
                 <Input 
-                  placeholder="Cari peternak, alamat, atau petugas..."
+                  placeholder="Ketik nama peternak atau nomor eartag..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 pl-12 shadow-inner"
@@ -109,8 +115,8 @@ export default function DataLaporanPage() {
       </Card>
 
       <div className="flex bg-[#F3F4F6] rounded-xl p-1 gap-1 shadow-inner">
-        <Button onClick={() => setView('tabel')} className={`flex-1 rounded-lg h-10 font-bold gap-2 ${view === 'tabel' ? 'bg-[#FBBF24] text-black shadow-sm' : 'bg-transparent text-muted-foreground hover:bg-black/5'}`}><TableIcon className="size-4" /> Tabel Riwayat</Button>
-        <Button onClick={() => setView('statistik')} className={`flex-1 rounded-lg h-10 font-bold gap-2 ${view === 'statistik' ? 'bg-[#FBBF24] text-black shadow-sm' : 'bg-transparent text-muted-foreground hover:bg-black/5'}`}><BarChart3 className="size-4" /> Statistik</Button>
+        <Button onClick={() => setView('tabel')} className={`flex-1 rounded-lg h-10 font-bold gap-2 ${view === 'tabel' ? 'bg-[#FBBF24] text-black shadow-sm' : 'bg-transparent text-muted-foreground hover:bg-black/5'}`}><TableIcon className="size-4" /> Tabel Data</Button>
+        <Button onClick={() => setView('statistik')} className={`flex-1 rounded-lg h-10 font-bold gap-2 ${view === 'statistik' ? 'bg-[#FBBF24] text-black shadow-sm' : 'bg-transparent text-muted-foreground hover:bg-black/5'}`}><BarChart3 className="size-4" /> Grafik</Button>
       </div>
 
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden min-h-[400px]">
@@ -120,11 +126,11 @@ export default function DataLaporanPage() {
               <Table>
                 <TableHeader className="bg-[#F8FAFC]">
                   <TableRow>
-                    <TableHead className="font-bold">Tanggal Lahir</TableHead>
+                    <TableHead className="font-bold">Waktu Lahir</TableHead>
                     <TableHead className="font-bold">Peternak & Alamat</TableHead>
-                    <TableHead className="font-bold">Puskeswan</TableHead>
-                    <TableHead className="font-bold">Petugas</TableHead>
-                    <TableHead className="font-bold">Detail Anakan</TableHead>
+                    <TableHead className="font-bold">Asal Puskeswan</TableHead>
+                    <TableHead className="font-bold">Petugas Pelapor</TableHead>
+                    <TableHead className="font-bold">Spesifikasi Anakan</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -157,16 +163,12 @@ export default function DataLaporanPage() {
                         <TableCell>
                           <div className="flex flex-col text-xs space-y-1">
                             <div className="flex gap-2">
-                              <span className="text-muted-foreground">Sex:</span>
+                              <span className="text-muted-foreground">Jenis:</span>
                               <span className="font-bold capitalize">{report.offspringSex || '-'}</span>
                             </div>
                             <div className="flex gap-2">
-                              <span className="text-muted-foreground">Jml:</span>
-                              <span className="font-bold">{report.offspringCount || 1}</span>
-                            </div>
-                            <div className="flex gap-2">
-                              <span className="text-muted-foreground">Induk:</span>
-                              <span className="italic">{report.damBreed || '-'}</span>
+                              <span className="text-muted-foreground">Jumlah:</span>
+                              <span className="font-bold">{report.offspringCount || 1} ekor</span>
                             </div>
                           </div>
                         </TableCell>
@@ -174,7 +176,12 @@ export default function DataLaporanPage() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground italic">Belum ada riwayat laporan yang ditemukan.</TableCell>
+                      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground">
+                        <div className="flex flex-col items-center gap-2">
+                          <p className="italic">Belum ada riwayat laporan yang ditemukan di database Firestore.</p>
+                          <p className="text-xs">Jika Anda baru saja menginput, pastikan koneksi internet stabil dan kunci API valid.</p>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -183,11 +190,17 @@ export default function DataLaporanPage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-32 space-y-4">
               <BarChart3 className="size-16 text-muted-foreground/20" />
-              <p className="text-muted-foreground font-medium">Analisis statistik sedang disiapkan berdasarkan data permanen.</p>
+              <p className="text-muted-foreground font-medium">Visualisasi data statistik otomatis dihasilkan dari database Cloud.</p>
             </div>
           )}
         </CardContent>
       </Card>
+      
+      {error && (
+        <div className="p-4 bg-red-50 text-red-700 rounded-lg text-sm font-medium border border-red-200">
+          Gagal memuat data: {error.message}. Mohon cek konfigurasi Firebase Anda.
+        </div>
+      )}
     </div>
   )
 }
