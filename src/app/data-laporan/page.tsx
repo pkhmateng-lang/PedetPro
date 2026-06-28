@@ -74,10 +74,6 @@ export default function DataLaporanPage() {
           </div>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
-           <Badge variant="outline" className="h-10 px-4 border-[#064E3B] text-[#064E3B] bg-white font-bold flex gap-2">
-            <Users className="size-4" />
-            Database Bersama: {reports?.length || 0} Laporan
-           </Badge>
            <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 px-6">
             <Download className="size-5" />
             Ekspor
