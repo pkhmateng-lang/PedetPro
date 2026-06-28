@@ -28,12 +28,10 @@ export default function DataLaporanPage() {
   const [filterPuskeswan, setFilterPuskeswan] = useState("all")
   const [isMounted, setIsMounted] = useState(false)
 
-  // Memastikan komponen telah terpasang di klien untuk menghindari Hydration Error
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
-  // Menstabilkan referensi query untuk mencegah re-render tak terbatas
   const reportsQuery = useMemoFirebase(() => {
     if (!db) return null;
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
@@ -184,11 +182,8 @@ export default function DataLaporanPage() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground">
-                        <div className="flex flex-col items-center gap-2">
-                          <p className="italic font-body">Belum ada riwayat laporan yang ditemukan di database Firestore.</p>
-                          <p className="text-xs">Jika Anda baru saja menginput, pastikan koneksi internet stabil.</p>
-                        </div>
+                      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground italic">
+                        kenapa data selalu hilang atau tidak tampil secara permanen di sini
                       </TableCell>
                     </TableRow>
                   )}
