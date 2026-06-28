@@ -6,7 +6,7 @@
       "description": "Data entity for livestock birth reports and breeding services.",
       "type": "object",
       "properties": {
-        "serviceDate": { "type": "string" },
+        "reportDate": { "type": "string" },
         "puskeswan": { "type": "string" },
         "officerName": { "type": "string" },
         "farmerName": { "type": "string" },
@@ -34,7 +34,7 @@
   "firestore": {
     "/reports/{reportId}": {
       "schema": "BirthReport",
-      "description": "Collection of all birth reports submitted by officers. Public access enabled for reporting. Force deployment trigger: 1740566500"
+      "description": "Collection of all birth reports submitted by officers. Public access enabled. Force redeploy: 1740567000"
     }
   }
 }
