@@ -77,16 +77,9 @@ export default function HomePage() {
       createdAt: serverTimestamp(),
     }
 
-    // Optimistic-like behavior: initiate write and handle UI response
+    // FAST RESPONSE: Initiate write and immediately redirect.
+    // Firestore handles background sync and local cache updates.
     addDoc(reportsRef, payload)
-      .then(() => {
-        toast({
-          title: "Berhasil Disimpan",
-          description: "Data laporan kelahiran telah berhasil masuk ke riwayat.",
-        })
-        // Smooth transition to history page
-        router.push('/data-laporan')
-      })
       .catch(async (err) => {
         const permissionError = new FirestorePermissionError({
           path: reportsRef.path,
@@ -95,13 +88,16 @@ export default function HomePage() {
         });
         errorEmitter.emit('permission-error', permissionError);
         console.error("Firestore save error:", err);
-        setLoading(false)
-        toast({
-          variant: "destructive",
-          title: "Gagal Menyimpan",
-          description: "Terjadi kesalahan koneksi saat menyimpan data.",
-        })
       });
+
+    // Immediate feedback and navigation
+    toast({
+      title: "Laporan Terkirim",
+      description: "Data sedang diproses. Mengalihkan ke riwayat...",
+    })
+    
+    // Immediate transition for best user experience
+    router.push('/data-laporan')
   }
 
   const budongBudongOfficers = ["Anshari Saleh", "Hadi", "Nur Fauzi", "Rahman", "Suprapto", "Tadi Saleh", "Lainnya"]
