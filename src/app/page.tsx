@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Calendar as CalendarIcon, Save, Plus, Loader2 } from "lucide-react"
+import { Save, Plus, Loader2 } from "lucide-react"
 import { useFirestore } from "@/firebase"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { errorEmitter } from "@/firebase/error-emitter"
@@ -29,7 +29,6 @@ export default function HomePage() {
   
   // Form States
   const [formData, setFormData] = useState({
-    serviceDate: "",
     puskeswan: "",
     officerName: "",
     farmerName: "",
@@ -48,11 +47,11 @@ export default function HomePage() {
     offspringCount: 1,
   })
 
-  // Set default date on client side to avoid hydration mismatch
+  // Set default birth date to today on client mount
   useEffect(() => {
     setFormData(prev => ({
       ...prev,
-      serviceDate: new Date().toLocaleDateString('en-GB').split('/').reverse().join('-')
+      birthDate: new Date().toISOString().split('T')[0]
     }))
   }, [])
 
@@ -78,13 +77,14 @@ export default function HomePage() {
       createdAt: serverTimestamp(),
     }
 
-    // Initiate the write operation
+    // Optimistic-like behavior: initiate write and handle UI response
     addDoc(reportsRef, payload)
       .then(() => {
         toast({
           title: "Berhasil Disimpan",
-          description: "Data laporan kelahiran telah berhasil masuk ke sistem.",
+          description: "Data laporan kelahiran telah berhasil masuk ke riwayat.",
         })
+        // Smooth transition to history page
         router.push('/data-laporan')
       })
       .catch(async (err) => {
@@ -99,7 +99,7 @@ export default function HomePage() {
         toast({
           variant: "destructive",
           title: "Gagal Menyimpan",
-          description: "Terjadi kesalahan saat menyimpan data ke database.",
+          description: "Terjadi kesalahan koneksi saat menyimpan data.",
         })
       });
   }
@@ -125,27 +125,12 @@ export default function HomePage() {
     <div className="space-y-6 animate-in fade-in duration-700 max-w-6xl mx-auto pb-12">
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-8 space-y-2">
-          <h2 className="text-3xl font-headline font-bold text-[#064E3B]">Laporan Kelahiran</h2>
-          <p className="text-muted-foreground font-medium">Input detail kelahiran ternak dan layanan reproduksi terpusat.</p>
+          <h2 className="text-3xl font-headline font-bold text-[#064E3B]">Form Laporan Kelahiran</h2>
+          <p className="text-muted-foreground font-medium">Input detail kelahiran ternak untuk arsip riwayat pusat.</p>
         </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-          <CardContent className="p-6 space-y-4">
-            <Label className="text-sm font-bold text-foreground/80">Tanggal Pelayanan Kelahiran</Label>
-            <div className="relative">
-              <Input 
-                type="date"
-                value={formData.serviceDate}
-                onChange={(e) => updateField('serviceDate', e.target.value)}
-                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4 focus:ring-1 focus:ring-primary/20"
-              />
-              <CalendarIcon className="absolute right-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-            </div>
-          </CardContent>
-        </Card>
-
         <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
           <CardContent className="p-6 space-y-4">
             <Label className="text-sm font-bold text-foreground/80">Puskeswan</Label>
@@ -163,32 +148,32 @@ export default function HomePage() {
             </Select>
           </CardContent>
         </Card>
-      </div>
 
-      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-        <CardContent className="p-6 space-y-4">
-          <Label className="text-sm font-bold text-foreground/80">Nama Petugas</Label>
-          {currentOfficers ? (
-            <Select onValueChange={(v) => updateField('officerName', v)}>
-              <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4">
-                <SelectValue placeholder="Pilih Nama Petugas" />
-              </SelectTrigger>
-              <SelectContent>
-                {currentOfficers.map((officer) => (
-                  <SelectItem key={officer} value={officer}>{officer}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : (
-            <Input 
-              placeholder="Isi Nama Petugas Manual"
-              value={formData.officerName}
-              onChange={(e) => updateField('officerName', e.target.value)}
-              className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4"
-            />
-          )}
-        </CardContent>
-      </Card>
+        <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
+          <CardContent className="p-6 space-y-4">
+            <Label className="text-sm font-bold text-foreground/80">Nama Petugas</Label>
+            {currentOfficers ? (
+              <Select onValueChange={(v) => updateField('officerName', v)}>
+                <SelectTrigger className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4">
+                  <SelectValue placeholder="Pilih Nama Petugas" />
+                </SelectTrigger>
+                <SelectContent>
+                  {currentOfficers.map((officer) => (
+                    <SelectItem key={officer} value={officer}>{officer}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <Input 
+                placeholder="Isi Nama Petugas Manual"
+                value={formData.officerName}
+                onChange={(e) => updateField('officerName', e.target.value)}
+                className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 px-4"
+              />
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-6 space-y-6">
@@ -295,7 +280,7 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-12">
               <div className="space-y-2">
                 <Label className="font-bold">Jenis Kelamin Anakan</Label>
-                <Select onValueChange={(v) => updateField('offspringSex', v)}>
+                <Select value={formData.offspringSex} onValueChange={(v) => updateField('offspringSex', v)}>
                   <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-12">
                     <SelectValue placeholder="Pilih Jenis Kelamin" />
                   </SelectTrigger>
@@ -317,14 +302,23 @@ export default function HomePage() {
         </Card>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end pt-4">
         <Button 
           disabled={loading}
           onClick={handleSave}
-          className="h-12 px-8 rounded-xl bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold gap-3 shadow-md transition-all active:scale-[0.98]"
+          className="h-12 px-10 rounded-xl bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold gap-3 shadow-lg transition-all active:scale-[0.98] w-full md:w-auto"
         >
-          {loading ? <Loader2 className="animate-spin size-5" /> : <Save className="size-5" />}
-          Simpan Data Laporan
+          {loading ? (
+            <>
+              <Loader2 className="animate-spin size-5" />
+              Menyimpan...
+            </>
+          ) : (
+            <>
+              <Save className="size-5" />
+              Simpan Data Laporan
+            </>
+          )}
         </Button>
       </div>
     </div>
