@@ -89,16 +89,14 @@ export default function HomePage() {
           requestResourceData: payload,
         });
         errorEmitter.emit('permission-error', permissionError);
-        console.error("Firestore save error:", err);
       });
 
-    // Immediate feedback and navigation
+    // Immediate feedback and navigation for smooth UX
     toast({
       title: "Laporan Terkirim",
-      description: "Data sedang diproses secara permanen. Mengalihkan ke riwayat...",
+      description: "Data sedang disimpan secara permanen di database pusat.",
     })
     
-    // Instant transition for smooth UX
     router.push('/data-laporan')
   }
 

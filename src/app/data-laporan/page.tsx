@@ -26,7 +26,7 @@ export default function DataLaporanPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [filterPuskeswan, setFilterPuskeswan] = useState("all")
 
-  // UseCollection hook to fetch all reports from the 'reports' collection
+  // UseCollection hook to fetch all reports from the 'reports' collection real-time
   const reportsQuery = useMemo(() => {
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
   }, [db])
