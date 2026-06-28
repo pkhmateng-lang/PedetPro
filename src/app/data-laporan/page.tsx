@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2, MapPin, Calendar, Database, AlertTriangle } from "lucide-react"
+import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2, MapPin, Calendar, Database, CheckCircle2, RefreshCw } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, orderBy } from "firebase/firestore"
@@ -34,6 +34,7 @@ export default function DataLaporanPage() {
 
   const reportsQuery = useMemoFirebase(() => {
     if (!db) return null;
+    // Mengambil koleksi 'reports' secara permanen dari Cloud Firestore
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
   }, [db])
 
@@ -68,17 +69,25 @@ export default function DataLaporanPage() {
         <div className="space-y-1">
           <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Pusat Laporan</h1>
           <div className="flex items-center gap-2 text-muted-foreground">
-            <Database className="size-4" />
-            <span className="text-sm font-medium">
-              Status Sistem: {isMounted && db ? "Sinkronisasi Cloud Aktif" : "Menghubungkan..."}
-            </span>
+            {isMounted && db ? (
+              <div className="flex items-center gap-1.5 text-green-600 font-bold text-xs bg-green-50 px-2 py-1 rounded-md border border-green-200">
+                <CheckCircle2 className="size-3.5" />
+                Data Sinkron Cloud
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 text-orange-500 font-bold text-xs bg-orange-50 px-2 py-1 rounded-md border border-orange-200">
+                <Loader2 className="size-3.5 animate-spin" />
+                Menghubungkan Database...
+              </div>
+            )}
           </div>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
-           <Badge variant="outline" className="h-10 px-4 border-[#064E3B] text-[#064E3B] bg-white font-bold">
-            Total Database: {reports?.length || 0}
+           <Badge variant="outline" className="h-10 px-4 border-[#064E3B] text-[#064E3B] bg-white font-bold flex gap-2">
+            <Database className="size-4" />
+            Total: {reports?.length || 0} Data
            </Badge>
-           <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 flex-1 md:flex-none">
+           <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 px-6">
             <Download className="size-5" />
             Ekspor
           </Button>
@@ -89,7 +98,7 @@ export default function DataLaporanPage() {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">Puskeswan</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Filter Puskeswan</Label>
               <Select value={filterPuskeswan} onValueChange={setFilterPuskeswan}>
                 <SelectContent>
                   <SelectItem value="all">Semua Puskeswan</SelectItem>
@@ -99,20 +108,20 @@ export default function DataLaporanPage() {
                   <SelectItem value="puskeswan-tobadak">Tobadak</SelectItem>
                   <SelectItem value="puskeswan-topoyo">Topoyo</SelectItem>
                 </SelectContent>
-                <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4">
+                <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4 font-medium">
                   <SelectValue placeholder="Semua Puskeswan" />
                 </SelectTrigger>
               </Select>
             </div>
             <div className="md:col-span-2 space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">Cari Peternak/Eartag</Label>
+              <Label className="text-sm font-medium text-muted-foreground">Cari Nama Peternak / No. Eartag</Label>
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
                 <Input 
                   placeholder="Ketik nama peternak atau nomor eartag..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 pl-12 shadow-inner"
+                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 pl-12 shadow-inner font-medium"
                 />
               </div>
             </div>
@@ -132,49 +141,49 @@ export default function DataLaporanPage() {
               <Table>
                 <TableHeader className="bg-[#F8FAFC]">
                   <TableRow>
-                    <TableHead className="font-bold text-[#064E3B]">Waktu Lahir</TableHead>
-                    <TableHead className="font-bold text-[#064E3B]">Peternak & Alamat</TableHead>
-                    <TableHead className="font-bold text-[#064E3B]">Asal Puskeswan</TableHead>
-                    <TableHead className="font-bold text-[#064E3B]">Petugas Pelapor</TableHead>
-                    <TableHead className="font-bold text-[#064E3B]">Spesifikasi Anakan</TableHead>
+                    <TableHead className="font-bold text-[#064E3B] w-[150px]">Tanggal Lahir</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Informasi Peternak</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Puskeswan</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Petugas</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Detail Anakan</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {loading ? (
-                    <TableRow><TableCell colSpan={5} className="text-center py-20"><Loader2 className="animate-spin mx-auto text-primary" /></TableCell></TableRow>
+                    <TableRow><TableCell colSpan={5} className="text-center py-24"><Loader2 className="animate-spin mx-auto text-primary size-8 mb-2" /><p className="text-sm text-muted-foreground font-medium">Memuat data permanen dari Cloud...</p></TableCell></TableRow>
                   ) : filteredReports.length > 0 ? (
                     filteredReports.map((report: any) => (
                       <TableRow key={report.id} className="hover:bg-muted/50 transition-colors">
                         <TableCell className="whitespace-nowrap font-medium text-muted-foreground">
                           <div className="flex items-center gap-2">
-                            <Calendar className="size-3" />
+                            <Calendar className="size-3.5 text-[#064E3B]" />
                             {report.birthDate ? format(new Date(report.birthDate), 'dd MMM yyyy') : '-'}
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
-                            <span className="font-bold text-[#064E3B]">{report.farmerName}</span>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <span className="font-bold text-[#064E3B] text-base">{report.farmerName}</span>
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
                               <MapPin className="size-3 shrink-0" />
                               <span className="truncate max-w-[200px]">{report.farmerAddress || 'Alamat tidak diisi'}</span>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#F3F4F6] text-[#064E3B] capitalize">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#F3F4F6] text-[#064E3B] capitalize border border-[#064E3B]/10">
                             {report.puskeswan?.replace('puskeswan-', '').replace('-', ' ')}
                           </span>
                         </TableCell>
-                        <TableCell className="font-medium">{report.officerName}</TableCell>
+                        <TableCell className="font-semibold text-foreground/80">{report.officerName}</TableCell>
                         <TableCell>
-                          <div className="flex flex-col text-xs space-y-1">
-                            <div className="flex gap-2">
-                              <span className="text-muted-foreground">Jenis:</span>
-                              <span className="font-bold capitalize">{report.offspringSex || '-'}</span>
+                          <div className="flex flex-col text-xs space-y-1.5">
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground w-12">Jenis:</span>
+                              <Badge variant="secondary" className="px-2 py-0 h-5 text-[10px] font-bold uppercase">{report.offspringSex || '-'}</Badge>
                             </div>
-                            <div className="flex gap-2">
-                              <span className="text-muted-foreground">Jumlah:</span>
-                              <span className="font-bold">{report.offspringCount || 1} ekor</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground w-12">Jumlah:</span>
+                              <span className="font-bold text-foreground">{report.offspringCount || 1} ekor</span>
                             </div>
                           </div>
                         </TableCell>
@@ -182,8 +191,18 @@ export default function DataLaporanPage() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground italic">
-                        Belum ada data laporan yang sinkron dengan Cloud.
+                      <TableCell colSpan={5} className="text-center py-32">
+                        <div className="flex flex-col items-center justify-center space-y-3 opacity-60">
+                          <Database className="size-12 text-muted-foreground" />
+                          <div className="space-y-1">
+                            <p className="text-foreground font-bold text-lg">Database Kosong</p>
+                            <p className="text-sm text-muted-foreground">Belum ada data yang tersimpan di Cloud Firestore.</p>
+                          </div>
+                          <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="gap-2 rounded-lg mt-2">
+                            <RefreshCw className="size-4" />
+                            Segarkan Halaman
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   )}
@@ -193,17 +212,19 @@ export default function DataLaporanPage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-32 space-y-4">
               <BarChart3 className="size-16 text-muted-foreground/20" />
-              <p className="text-muted-foreground font-medium">Visualisasi data statistik otomatis dihasilkan dari database Cloud.</p>
+              <p className="text-muted-foreground font-medium">Grafik statistik akan muncul di sini setelah data terkumpul.</p>
             </div>
           )}
         </CardContent>
       </Card>
       
       {error && (
-        <div className="p-4 bg-red-50 text-red-700 rounded-lg text-sm font-medium border border-red-200 flex items-center gap-2">
-          <AlertTriangle className="size-4" />
-          Gagal memuat data: {error.message}. Pastikan Security Rules Firestore sudah diizinkan.
-        </div>
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-4 flex items-center gap-3 text-red-700 text-sm font-bold">
+            <RefreshCw className="size-5 animate-spin" />
+            Terjadi masalah sinkronisasi. Sedang mencoba menghubungkan ulang ke Cloud Firestore...
+          </CardContent>
+        </Card>
       )}
     </div>
   )

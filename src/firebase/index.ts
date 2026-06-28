@@ -2,7 +2,7 @@
 'use client';
 
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFirestore, Firestore, enableIndexedDbPersistence } from 'firebase/firestore';
 import { getAuth, Auth } from 'firebase/auth';
 import { firebaseConfig } from './config';
 import { useMemo } from 'react';
@@ -26,6 +26,18 @@ export function initializeFirebase() {
       
       if (!firestore) {
         firestore = getFirestore(app);
+        // Mengaktifkan persistensi offline agar data tetap bisa diakses meskipun koneksi tidak stabil
+        try {
+          enableIndexedDbPersistence(firestore).catch((err) => {
+            if (err.code === 'failed-precondition') {
+              console.warn('Multi-tab persistence failed');
+            } else if (err.code === 'unimplemented') {
+              console.warn('Browser does not support persistence');
+            }
+          });
+        } catch (e) {
+          // Persistence can only be enabled once
+        }
       }
       if (!auth) {
         auth = getAuth(app);
