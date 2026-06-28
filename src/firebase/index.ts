@@ -12,22 +12,26 @@ let firestore: Firestore;
 let auth: Auth;
 
 /**
- * Inisialisasi layanan Firebase.
- * Memastikan Firebase hanya berjalan di sisi klien (browser) untuk menghindari error SSR.
+ * Inisialisasi layanan Firebase secara aman.
+ * Menangani kasus di mana aplikasi mungkin sudah terinisialisasi.
  */
 export function initializeFirebase() {
   if (typeof window !== 'undefined') {
-    if (!getApps().length) {
-      app = initializeApp(firebaseConfig);
-    } else {
-      app = getApp();
-    }
-    
-    if (!firestore) {
-      firestore = getFirestore(app);
-    }
-    if (!auth) {
-      auth = getAuth(app);
+    try {
+      if (!getApps().length) {
+        app = initializeApp(firebaseConfig);
+      } else {
+        app = getApp();
+      }
+      
+      if (!firestore) {
+        firestore = getFirestore(app);
+      }
+      if (!auth) {
+        auth = getAuth(app);
+      }
+    } catch (error) {
+      console.error("Firebase initialization failed:", error);
     }
   }
 

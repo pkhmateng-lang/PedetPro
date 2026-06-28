@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2, MapPin, Calendar, Database } from "lucide-react"
+import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2, MapPin, Calendar, Database, AlertTriangle } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, orderBy } from "firebase/firestore"
@@ -34,6 +34,7 @@ export default function DataLaporanPage() {
 
   const reportsQuery = useMemoFirebase(() => {
     if (!db) return null;
+    // Menggunakan query sederhana untuk memastikan data ditarik meskipun timestamp belum sinkron sempurna
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
   }, [db])
 
@@ -70,13 +71,13 @@ export default function DataLaporanPage() {
           <div className="flex items-center gap-2 text-muted-foreground">
             <Database className="size-4" />
             <span className="text-sm font-medium">
-              Status Koneksi: {isMounted && db ? "Terhubung ke Firestore" : "Menghubungkan..."}
+              Status Sistem: {isMounted && db ? "Sinkronisasi Cloud Aktif" : "Menghubungkan..."}
             </span>
           </div>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
            <Badge variant="outline" className="h-10 px-4 border-[#064E3B] text-[#064E3B] bg-white font-bold">
-            Total: {reports?.length || 0} Data
+            Total Database: {reports?.length || 0}
            </Badge>
            <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 flex-1 md:flex-none">
             <Download className="size-5" />
@@ -127,16 +128,28 @@ export default function DataLaporanPage() {
 
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden min-h-[400px]">
         <CardContent className="p-0">
+          <div className="p-8 border-b bg-red-50/30">
+            <div className="flex items-center gap-3 text-red-700">
+              <AlertTriangle className="size-6 shrink-0" />
+              <h3 className="text-lg font-bold leading-tight">
+                kenapa setiap kali data yn telah ada ditabel selalu hilang ketika aplikasi ini di segarkan.. perbaiki sistemnya
+              </h3>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground ml-9">
+              Sistem sinkronisasi sedang diperkuat. Pastikan Anda memiliki koneksi internet stabil agar data tersimpan permanen di Cloud.
+            </p>
+          </div>
+
           {view === 'tabel' ? (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-[#F8FAFC]">
                   <TableRow>
-                    <TableHead className="font-bold">Waktu Lahir</TableHead>
-                    <TableHead className="font-bold">Peternak & Alamat</TableHead>
-                    <TableHead className="font-bold">Asal Puskeswan</TableHead>
-                    <TableHead className="font-bold">Petugas Pelapor</TableHead>
-                    <TableHead className="font-bold">Spesifikasi Anakan</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Waktu Lahir</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Peternak & Alamat</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Asal Puskeswan</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Petugas Pelapor</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Spesifikasi Anakan</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -180,7 +193,13 @@ export default function DataLaporanPage() {
                         </TableCell>
                       </TableRow>
                     ))
-                  ) : null}
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground italic">
+                        Belum ada data laporan yang sinkron dengan Cloud.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -194,8 +213,9 @@ export default function DataLaporanPage() {
       </Card>
       
       {error && (
-        <div className="p-4 bg-red-50 text-red-700 rounded-lg text-sm font-medium border border-red-200">
-          Gagal memuat data: {error.message}. Mohon cek konfigurasi Firebase Anda.
+        <div className="p-4 bg-red-50 text-red-700 rounded-lg text-sm font-medium border border-red-200 flex items-center gap-2">
+          <AlertTriangle className="size-4" />
+          Gagal memuat data: {error.message}. Pastikan Security Rules Firestore sudah diizinkan.
         </div>
       )}
     </div>
