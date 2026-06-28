@@ -26,7 +26,7 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
         const items = snapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
-        }));
+        } as T & { id: string }));
         setData(items);
         setLoading(false);
       },
@@ -34,13 +34,15 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
         // Mencoba mendapatkan path dari query untuk pelaporan error yang lebih baik
         let path = 'unknown';
         try {
-          if ((query as any).path) {
-            path = (query as any).path;
-          } else if ((query as any)._query?.path?.segments) {
-            path = (query as any)._query.path.segments.join('/');
+          // Pada JS SDK, path sering kali tersembunyi di internal query object
+          const internalQuery = (query as any)._query || query;
+          if (internalQuery.path) {
+            path = internalQuery.path.toString();
+          } else if (internalQuery.collection) {
+            path = internalQuery.collection.path;
           }
         } catch (e) {
-          path = 'reports'; // Default fallback untuk aplikasi ini
+          path = 'reports'; // Fallback spesifik untuk aplikasi ini
         }
 
         const permissionError = new FirestorePermissionError({

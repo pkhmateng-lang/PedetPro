@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, BarChart3, Table as TableIcon, Undo2, Download, Loader2, MapPin, Calendar, Database, CheckCircle2, RefreshCw, Users } from "lucide-react"
+import { Search, Undo2, Download, Loader2, MapPin, Calendar, Database, Users, RefreshCw } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, orderBy } from "firebase/firestore"
@@ -40,7 +40,7 @@ export default function DataLaporanPage() {
 
   const filteredReports = useMemo(() => {
     if (!reports) return []
-    return reports.filter(r => {
+    return reports.filter((r: any) => {
       const searchStr = ((r.farmerName || "") + (r.officerName || "") + (r.farmerAddress || "") + (r.damEartag || "")).toLowerCase()
       const matchSearch = searchStr.includes(searchQuery.toLowerCase())
       const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
@@ -70,13 +70,13 @@ export default function DataLaporanPage() {
           <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Pusat Laporan</h1>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Database className="size-4" />
-            <span className="text-sm font-medium">Status Koneksi: {db ? "Terhubung ke Database Pusat" : "Menghubungkan..."}</span>
+            <span className="text-sm font-medium">Status Database: {db ? "Terhubung" : "Menghubungkan..."}</span>
           </div>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
            <Badge variant="outline" className="h-10 px-4 border-[#064E3B] text-[#064E3B] bg-white font-bold flex gap-2">
             <Users className="size-4" />
-            Shared Database: {reports?.length || 0} Data
+            Database Bersama: {reports?.length || 0} Laporan
            </Badge>
            <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 px-6">
             <Download className="size-5" />
@@ -138,7 +138,7 @@ export default function DataLaporanPage() {
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-24">
                       <Loader2 className="animate-spin mx-auto text-[#064E3B] size-8 mb-2" />
-                      <p className="text-sm text-muted-foreground font-medium">Sinkronisasi dengan Database Pusat...</p>
+                      <p className="text-sm text-muted-foreground font-medium">Mengambil data dari Cloud...</p>
                     </TableCell>
                   </TableRow>
                 ) : filteredReports.length > 0 ? (
@@ -193,7 +193,7 @@ export default function DataLaporanPage() {
                         <Database className="size-12 text-muted-foreground" />
                         <div className="space-y-1">
                           <p className="text-foreground font-bold text-lg">Belum Ada Laporan</p>
-                          <p className="text-sm text-muted-foreground">Semua data yang diinput oleh petugas akan muncul di sini.</p>
+                          <p className="text-sm text-muted-foreground">Data yang diinput oleh petugas akan muncul di sini.</p>
                         </div>
                       </div>
                     </TableCell>
@@ -209,7 +209,7 @@ export default function DataLaporanPage() {
         <Card className="border-red-200 bg-red-50">
           <CardContent className="p-4 flex items-center gap-3 text-red-700 text-sm font-bold">
             <RefreshCw className="size-5 animate-spin" />
-            Koneksi database terganggu. Mencoba menghubungkan kembali...
+            Terjadi masalah izin database. Mohon tunggu sebentar selagi sistem memperbarui Security Rules...
           </CardContent>
         </Card>
       )}

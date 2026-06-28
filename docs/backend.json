@@ -34,7 +34,7 @@
   "firestore": {
     "/reports/{reportId}": {
       "schema": "BirthReport",
-      "description": "Collection of all birth reports submitted by officers. Deployment trigger: 1715432000"
+      "description": "Collection of all birth reports submitted by officers. Deployment trigger: 1740562000"
     }
   }
 }
