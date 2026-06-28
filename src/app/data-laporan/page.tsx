@@ -45,7 +45,7 @@ export default function DataLaporanPage() {
       const searchStr = ((r.farmerName || "") + (r.officerName || "") + (r.farmerAddress || "") + (r.damEartag || "")).toLowerCase()
       const matchSearch = searchStr.includes(searchQuery.toLowerCase())
       const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
-      return matchSearch && matchPuswan
+      return matchSearch && matchPuskeswan
     })
   }, [reports, searchQuery, filterPuskeswan])
 
@@ -91,9 +91,6 @@ export default function DataLaporanPage() {
             <div className="space-y-2">
               <Label className="text-sm font-medium text-muted-foreground">Puskeswan</Label>
               <Select value={filterPuskeswan} onValueChange={setFilterPuskeswan}>
-                <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4">
-                  <SelectValue placeholder="Semua Puskeswan" />
-                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Semua Puskeswan</SelectItem>
                   <SelectItem value="puskeswan-budong-budong">Budong-Budong</SelectItem>
@@ -102,6 +99,9 @@ export default function DataLaporanPage() {
                   <SelectItem value="puskeswan-tobadak">Tobadak</SelectItem>
                   <SelectItem value="puskeswan-topoyo">Topoyo</SelectItem>
                 </SelectContent>
+                <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4">
+                  <SelectValue placeholder="Semua Puskeswan" />
+                </SelectTrigger>
               </Select>
             </div>
             <div className="md:col-span-2 space-y-2">
@@ -180,13 +180,7 @@ export default function DataLaporanPage() {
                         </TableCell>
                       </TableRow>
                     ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground italic">
-                        lagi lagi data yang saya sudah input hilang tidak tampil di table ini
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  ) : null}
                 </TableBody>
               </Table>
             </div>
