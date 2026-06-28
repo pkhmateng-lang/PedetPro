@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Save, Plus, Loader2, Calendar } from "lucide-react"
+import { Save, Loader2, Calendar as CalendarIcon } from "lucide-react"
 import { useFirestore } from "@/firebase"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { errorEmitter } from "@/firebase/error-emitter"
@@ -27,7 +27,6 @@ export default function HomePage() {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   
-  // Form States
   const [formData, setFormData] = useState({
     reportDate: "",
     puskeswan: "",
@@ -48,7 +47,6 @@ export default function HomePage() {
     offspringCount: 1,
   })
 
-  // Set default dates to today on client mount
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0]
     setFormData(prev => ({
@@ -81,6 +79,7 @@ export default function HomePage() {
     }
 
     // FAST RESPONSE: Initiate write and immediately redirect.
+    // Firestore handles background sync even if navigation happens.
     addDoc(reportsRef, payload)
       .catch(async (err) => {
         const permissionError = new FirestorePermissionError({
@@ -91,12 +90,12 @@ export default function HomePage() {
         errorEmitter.emit('permission-error', permissionError);
       });
 
-    // Immediate feedback and navigation for smooth UX
     toast({
       title: "Laporan Terkirim",
       description: "Data sedang disimpan secara permanen di database pusat.",
     })
     
+    // Immediate navigation for smooth UX
     router.push('/data-laporan')
   }
 
@@ -129,7 +128,7 @@ export default function HomePage() {
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
-            <Calendar className="size-5 text-[#064E3B]" />
+            <CalendarIcon className="size-5 text-[#064E3B]" />
             <Label className="text-sm font-bold text-foreground/80">Tanggal Laporan</Label>
           </div>
           <Input 
@@ -288,7 +287,7 @@ export default function HomePage() {
 
         <Card className="border border-border/50 shadow-sm bg-white overflow-hidden relative">
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="font-bold">Jenis Kelamin Anakan</Label>
                 <Select value={formData.offspringSex} onValueChange={(v) => updateField('offspringSex', v)}>
@@ -306,9 +305,6 @@ export default function HomePage() {
                 <Input type="number" min="1" value={formData.offspringCount} onChange={(e) => updateField('offspringCount', parseInt(e.target.value) || 1)} className="bg-[#F3F4F6] border-none rounded-xl h-12 shadow-inner" />
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="absolute bottom-6 right-6 rounded-full bg-[#F3F4F6] text-[#064E3B] hover:bg-[#064E3B] hover:text-white transition-all">
-              <Plus className="size-5" />
-            </Button>
           </CardContent>
         </Card>
       </div>

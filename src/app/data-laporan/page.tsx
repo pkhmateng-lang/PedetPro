@@ -26,7 +26,8 @@ export default function DataLaporanPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [filterPuskeswan, setFilterPuskeswan] = useState("all")
 
-  // UseCollection hook to fetch all reports from the 'reports' collection real-time
+  // UseCollection hook to fetch all reports from the 'reports' collection real-time.
+  // This ensures data is persistent and synced for all users.
   const reportsQuery = useMemo(() => {
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
   }, [db])
