@@ -34,7 +34,6 @@ export default function DataLaporanPage() {
 
   const reportsQuery = useMemoFirebase(() => {
     if (!db) return null;
-    // Menggunakan query sederhana untuk memastikan data ditarik meskipun timestamp belum sinkron sempurna
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
   }, [db])
 
@@ -128,18 +127,6 @@ export default function DataLaporanPage() {
 
       <Card className="border border-border/50 shadow-sm bg-white overflow-hidden min-h-[400px]">
         <CardContent className="p-0">
-          <div className="p-8 border-b bg-red-50/30">
-            <div className="flex items-center gap-3 text-red-700">
-              <AlertTriangle className="size-6 shrink-0" />
-              <h3 className="text-lg font-bold leading-tight">
-                kenapa setiap kali data yn telah ada ditabel selalu hilang ketika aplikasi ini di segarkan.. perbaiki sistemnya
-              </h3>
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground ml-9">
-              Sistem sinkronisasi sedang diperkuat. Pastikan Anda memiliki koneksi internet stabil agar data tersimpan permanen di Cloud.
-            </p>
-          </div>
-
           {view === 'tabel' ? (
             <div className="overflow-x-auto">
               <Table>
