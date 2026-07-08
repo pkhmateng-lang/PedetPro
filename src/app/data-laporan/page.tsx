@@ -14,8 +14,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, Undo2, Download, MapPin, Calendar, Trash2, RefreshCw } from "lucide-react"
+import { 
+  Search, 
+  Undo2, 
+  Download, 
+  MapPin, 
+  Calendar, 
+  Trash2, 
+  LayoutGrid, 
+  BarChart3,
+  ChevronDown,
+  User,
+  Info
+} from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, orderBy, doc, deleteDoc } from "firebase/firestore"
 import { format } from "date-fns"
@@ -25,42 +44,33 @@ import { errorEmitter } from "@/firebase/error-emitter"
 import { FirestorePermissionError } from "@/firebase/errors"
 import { Skeleton } from "@/components/ui/skeleton"
 
-// Contoh data untuk tampilan awal
 const MOCK_REPORTS = [
   {
     id: "mock-1",
     farmerName: "Ahmad Subagjo",
     farmerAddress: "Desa Topoyo, Mateng",
     puskeswan: "puskeswan-topoyo",
-    officerName: "Alfons B",
-    birthDate: "2024-02-25",
+    officerName: "drh. Iqbal Djamil",
+    birthDate: "2026-01-26",
     offspringSex: "betina",
     offspringCount: 1,
     breedingType: "inseminasi-buatan",
+    damBreed: "Simmental",
+    damEartag: "7601010022",
     isMock: true
   },
   {
     id: "mock-2",
     farmerName: "I Made Suardana",
     farmerAddress: "Kec. Karossa, Mateng",
-    puskeswan: "puskeswan-karossa",
-    officerName: "Asri Rasyid",
-    birthDate: "2024-02-24",
+    puskeswan: "puskeswan-topoyo",
+    officerName: "drh. Iqbal Djamil",
+    birthDate: "2026-01-25",
     offspringSex: "jantan",
     offspringCount: 1,
     breedingType: "kawin-alam",
-    isMock: true
-  },
-  {
-    id: "mock-3",
-    farmerName: "Siti Aminah",
-    farmerAddress: "Desa Pangale, Mateng",
-    puskeswan: "puskeswan-pangale",
-    officerName: "drh. Ketut Elok",
-    birthDate: "2024-02-23",
-    offspringSex: "jantan",
-    offspringCount: 1,
-    breedingType: "inseminasi-buatan",
+    damBreed: "Bali",
+    damEartag: "7601020055",
     isMock: true
   }
 ]
@@ -83,14 +93,12 @@ export default function DataLaporanPage() {
   const { data: cloudReports, loading, error } = useCollection(reportsQuery)
 
   const allReports = useMemo(() => {
-    // Jika ada data di cloud, gunakan data cloud. Jika kosong, gunakan mock.
-    const baseData = cloudReports.length > 0 ? cloudReports : MOCK_REPORTS;
-    return baseData;
+    return cloudReports.length > 0 ? cloudReports : MOCK_REPORTS;
   }, [cloudReports])
 
   const filteredReports = useMemo(() => {
     return allReports.filter((r: any) => {
-      const searchStr = ((r.farmerName || "") + (r.officerName || "") + (r.farmerAddress || "") + (r.damEartag || "")).toLowerCase()
+      const searchStr = ((r.farmerName || "") + (r.officerName || "") + (r.farmerAddress || "")).toLowerCase()
       const matchSearch = searchStr.includes(searchQuery.toLowerCase())
       const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
       return matchSearch && matchPuskeswan
@@ -99,197 +107,197 @@ export default function DataLaporanPage() {
 
   const handleDelete = (reportId: string, isMock?: boolean) => {
     if (isMock) {
-      toast({
-        title: "Data Contoh",
-        description: "Data contoh tidak dapat dihapus dari database cloud.",
-      })
+      toast({ title: "Data Contoh", description: "Data contoh tidak dapat dihapus." })
       return
     }
-
-    if (!confirm("Apakah Anda yakin ingin menghapus laporan ini?")) return;
-
+    if (!confirm("Hapus laporan ini?")) return;
     const docRef = doc(db, 'reports', reportId);
     deleteDoc(docRef).catch(async (err) => {
-      const permissionError = new FirestorePermissionError({
-        path: docRef.path,
-        operation: 'delete',
-      });
-      errorEmitter.emit('permission-error', permissionError);
+      errorEmitter.emit('permission-error', new FirestorePermissionError({ path: docRef.path, operation: 'delete' }));
     });
-
-    toast({
-      title: "Laporan Dihapus",
-      description: "Data telah dihapus dari database cloud.",
-    });
+    toast({ title: "Laporan Dihapus", description: "Data telah dihapus dari cloud." });
   }
 
   if (!isMounted) return null;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-12 relative">
-      <div className="fixed left-6 bottom-10 z-[60] flex flex-col items-center gap-2">
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto pb-24 relative">
+      <div className="fixed left-6 bottom-10 z-[60] flex flex-col items-center gap-2 md:hidden">
         <Link href="/">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="size-14 rounded-full bg-[#064E3B] text-white hover:bg-[#064E3B]/90 shadow-[0_10px_40px_-10px_rgba(6,78,59,0.5)] border-4 border-white transition-all hover:scale-110 active:scale-95"
-          >
-            <Undo2 className="size-8" />
+          <Button variant="ghost" size="icon" className="size-12 rounded-full bg-[#064E3B] text-white shadow-lg border-2 border-white">
+            <Undo2 className="size-6" />
           </Button>
         </Link>
-        <span className="text-[10px] font-bold text-[#064E3B] bg-white/80 px-2 py-0.5 rounded-full shadow-sm uppercase tracking-tighter">Kembali</span>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Pusat Laporan</h1>
-        </div>
-        <div className="flex gap-3 w-full md:w-auto">
-           <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 px-6">
-            <Download className="size-5" />
-            Ekspor
-          </Button>
-        </div>
-      </div>
+      <div className="px-4 md:px-0">
+        <Tabs defaultValue="tabel" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-[#F1F5F9] rounded-xl p-1 h-14 mb-8">
+            <TabsTrigger 
+              value="tabel" 
+              className="rounded-lg data-[state=active]:bg-[#FBBF24] data-[state=active]:text-black font-bold flex items-center gap-2 text-muted-foreground transition-all"
+            >
+              <LayoutGrid className="size-5" />
+              Tabel
+            </TabsTrigger>
+            <TabsTrigger 
+              value="statistik" 
+              className="rounded-lg data-[state=active]:bg-[#FBBF24] data-[state=active]:text-black font-bold flex items-center gap-2 text-muted-foreground transition-all"
+            >
+              <BarChart3 className="size-5" />
+              Statistik
+            </TabsTrigger>
+          </TabsList>
 
-      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden">
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">Filter Puskeswan</Label>
-              <Select value={filterPuskeswan} onValueChange={setFilterPuskeswan}>
-                <SelectContent>
-                  <SelectItem value="all">Semua Puskeswan</SelectItem>
-                  <SelectItem value="puskeswan-budong-budong">Budong-Budong</SelectItem>
-                  <SelectItem value="puskeswan-karossa">Karossa</SelectItem>
-                  <SelectItem value="puskeswan-pangale">Pangale</SelectItem>
-                  <SelectItem value="puskeswan-tobadak">Tobadak</SelectItem>
-                  <SelectItem value="puskeswan-topoyo">Topoyo</SelectItem>
-                </SelectContent>
-                <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4 font-medium">
-                  <SelectValue placeholder="Semua Puskeswan" />
-                </SelectTrigger>
-              </Select>
+          <TabsContent value="tabel" className="space-y-6">
+            <div className="hidden md:flex justify-between items-center mb-6">
+              <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Laporan</h1>
+              <Button className="bg-[#064E3B] text-white rounded-xl gap-2 font-bold">
+                <Download className="size-5" /> Ekspor
+              </Button>
             </div>
-            <div className="md:col-span-2 space-y-2">
-              <Label className="text-sm font-medium text-muted-foreground">Cari Peternak / Eartag / Petugas</Label>
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
-                <Input 
-                  placeholder="Ketik kata kunci pencarian..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 pl-12 shadow-inner font-medium"
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      <Card className="border border-border/50 shadow-sm bg-white overflow-hidden min-h-[400px]">
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-[#F8FAFC]">
-                <TableRow>
-                  <TableHead className="font-bold text-[#064E3B] w-[150px]">Waktu Lahir</TableHead>
-                  <TableHead className="font-bold text-[#064E3B]">Peternak & Alamat</TableHead>
-                  <TableHead className="font-bold text-[#064E3B]">Puskeswan</TableHead>
-                  <TableHead className="font-bold text-[#064E3B]">Petugas</TableHead>
-                  <TableHead className="font-bold text-[#064E3B]">Anakan</TableHead>
-                  <TableHead className="font-bold text-[#064E3B] w-[50px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  Array.from({ length: 8 }).map((_, i) => (
-                    <TableRow key={i}>
-                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                      <TableCell>
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-32" />
-                          <Skeleton className="h-3 w-48" />
-                        </div>
+            <Card className="border-none shadow-sm bg-white overflow-hidden mb-4">
+              <CardContent className="p-4 md:p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
+                    <Input 
+                      placeholder="Cari..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-[#F3F4F6] border-none rounded-xl h-11 pl-12 font-medium"
+                    />
+                  </div>
+                  <Select value={filterPuskeswan} onValueChange={setFilterPuskeswan}>
+                    <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-11 px-4 font-medium">
+                      <SelectValue placeholder="Puskeswan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua Puskeswan</SelectItem>
+                      <SelectItem value="puskeswan-budong-budong">Budong-Budong</SelectItem>
+                      <SelectItem value="puskeswan-karossa">Karossa</SelectItem>
+                      <SelectItem value="puskeswan-pangale">Pangale</SelectItem>
+                      <SelectItem value="puskeswan-tobadak">Tobadak</SelectItem>
+                      <SelectItem value="puskeswan-topoyo">Topoyo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Desktop Table */}
+            <div className="hidden md:block bg-white rounded-xl border border-border/50 overflow-hidden">
+              <Table>
+                <TableHeader className="bg-[#F8FAFC]">
+                  <TableRow>
+                    <TableHead className="font-bold text-[#064E3B]">Tanggal</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Petugas</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Puskeswan</TableHead>
+                    <TableHead className="font-bold text-[#064E3B]">Peternak</TableHead>
+                    <TableHead className="font-bold text-[#064E3B] text-right">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <TableRow key={i}><TableCell colSpan={5}><Skeleton className="h-10 w-full" /></TableCell></TableRow>
+                    ))
+                  ) : filteredReports.map((report: any) => (
+                    <TableRow key={report.id}>
+                      <TableCell className="text-xs font-medium">{report.birthDate ? format(new Date(report.birthDate), 'dd MMM yyyy') : '-'}</TableCell>
+                      <TableCell className="font-bold text-[#064E3B]">{report.officerName}</TableCell>
+                      <TableCell className="text-xs font-semibold uppercase">{report.puskeswan?.replace('puskeswan-', '').replace('-', ' ')}</TableCell>
+                      <TableCell className="text-sm font-medium">{report.farmerName}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(report.id, report.isMock)}><Trash2 className="size-4 text-destructive" /></Button>
                       </TableCell>
-                      <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                      <TableCell><Skeleton className="h-8 w-8 rounded-md" /></TableCell>
                     </TableRow>
-                  ))
-                ) : filteredReports.length > 0 ? (
-                  filteredReports.map((report: any, idx) => (
-                    <TableRow 
-                      key={report.id} 
-                      className="hover:bg-muted/50 transition-colors group animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
-                      style={{ animationDelay: `${idx * 40}ms` }}
-                    >
-                      <TableCell className="whitespace-nowrap font-medium text-muted-foreground text-xs">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="size-3.5 text-[#064E3B]" />
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Mobile Cards (Accordion) */}
+            <div className="md:hidden space-y-4">
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-32 w-full rounded-2xl" />
+                ))
+              ) : filteredReports.map((report: any) => (
+                <Accordion key={report.id} type="single" collapsible className="w-full">
+                  <AccordionItem value={report.id} className="border rounded-2xl bg-white px-4 py-2 shadow-sm border-slate-100">
+                    <AccordionTrigger className="hover:no-underline py-4">
+                      <div className="flex flex-col items-start text-left space-y-1 w-full">
+                        <span className="text-lg font-bold text-slate-900 leading-tight">{report.officerName}</span>
+                        <span className="text-sm font-medium text-slate-400 capitalize">
+                          {report.puskeswan?.replace('puskeswan-', '').replace('-', ' ')}
+                        </span>
+                        <span className="text-sm text-slate-400 font-medium">
                           {report.birthDate ? format(new Date(report.birthDate), 'dd MMM yyyy') : '-'}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span className="font-bold text-[#064E3B] text-sm">
-                            {report.farmerName}
-                            {report.isMock && <Badge variant="outline" className="ml-2 text-[8px] h-4 px-1 uppercase border-[#064E3B] text-[#064E3B]">Contoh</Badge>}
-                          </span>
-                          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
-                            <MapPin className="size-3 shrink-0" />
-                            <span className="truncate max-w-[150px]">{report.farmerAddress || 'Alamat tidak ada'}</span>
+                        </span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-2 pb-4 border-t border-slate-50">
+                      <div className="grid grid-cols-1 gap-4 text-sm mt-4">
+                        <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                          <User className="size-5 text-[#064E3B]" />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-muted-foreground uppercase font-bold">Peternak</span>
+                            <span className="font-bold text-slate-800">{report.farmerName}</span>
                           </div>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary" className="bg-[#F3F4F6] text-[#064E3B] text-[10px] uppercase font-bold border-none">
-                          {report.puskeswan?.replace('puskeswan-', '').replace('-', ' ')}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs font-semibold">{report.officerName}</span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col text-[10px] space-y-1">
-                          <span className="font-bold uppercase text-[#064E3B]">{report.offspringSex || '-'}</span>
-                          <span className="text-muted-foreground">{report.offspringCount || 1} ekor</span>
+                        <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                          <MapPin className="size-5 text-[#064E3B]" />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-muted-foreground uppercase font-bold">Alamat</span>
+                            <span className="font-medium text-slate-700">{report.farmerAddress || '-'}</span>
+                          </div>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={() => handleDelete(report.id, report.isMock)}
-                          className="size-8 text-muted-foreground hover:text-destructive transition-colors"
-                        >
-                          <Trash2 className="size-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-32 text-muted-foreground/50 italic animate-in fade-in duration-700">
-                      Cloud database sinkron. Belum ada data laporan yang tersedia.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-      
-      {error && (
-        <Card className="border-red-200 bg-red-50 animate-in bounce-in duration-300">
-          <CardContent className="p-4 flex items-center gap-3 text-red-700 text-sm font-bold">
-            <RefreshCw className="size-5 animate-spin" />
-            Sedang mencoba menyambung ulang ke Cloud Store...
-          </CardContent>
-        </Card>
-      )}
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-slate-50 rounded-xl">
+                            <span className="text-[10px] text-muted-foreground uppercase font-bold block mb-1">Indukan</span>
+                            <span className="font-bold text-slate-800">{report.damBreed || '-'}</span>
+                          </div>
+                          <div className="p-3 bg-slate-50 rounded-xl">
+                            <span className="text-[10px] text-muted-foreground uppercase font-bold block mb-1">Eartag</span>
+                            <span className="font-bold text-slate-800">{report.damEartag || '-'}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between pt-4">
+                          <Badge variant="outline" className="rounded-lg border-slate-200 text-slate-500 uppercase text-[10px] font-bold">
+                            {report.breedingType?.replace('-', ' ')}
+                          </Badge>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => handleDelete(report.id, report.isMock)}
+                            className="text-destructive font-bold text-xs"
+                          >
+                            Hapus Laporan
+                          </Button>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="statistik">
+            <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 px-6">
+              <div className="size-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
+                <BarChart3 className="size-10" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-bold text-xl text-slate-800">Visualisasi Data</h3>
+                <p className="text-slate-500 text-sm max-w-xs mx-auto">Fitur statistik sedang dalam pengembangan untuk analisis performa peternakan.</p>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   )
 }
