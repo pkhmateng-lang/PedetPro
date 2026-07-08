@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -132,16 +132,15 @@ export default function DataLaporanPage() {
   const [filterMonth, setFilterMonth] = useState("all")
   const [filterYear, setFilterYear] = useState("all")
   
-  // Edit State
   const [editingReport, setEditingReport] = useState<any>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
-  // Reset officer filter when puskeswan filter changes
   useEffect(() => {
     setFilterOfficer("all")
   }, [filterPuskeswan])
@@ -191,6 +190,60 @@ export default function DataLaporanPage() {
     })
   }, [allReports, searchQuery, filterPuskeswan, filterOfficer, filterMonth, filterYear])
 
+  const handleExportExcel = async () => {
+    if (filteredReports.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Gagal Mengunduh",
+        description: "Tidak ada data yang tersedia untuk diunduh dengan filter saat ini.",
+      });
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      const XLSX = await import('xlsx');
+      
+      const exportData = filteredReports.map((report: any) => ({
+        "Tanggal Laporan": report.reportDate || "-",
+        "Puskeswan": report.puskeswan?.replace('puskeswan-', '').replace('-', ' ').toUpperCase() || "-",
+        "Nama Petugas": report.officerName || "-",
+        "Nama Peternak": report.farmerName || "-",
+        "NIK / No. HP": report.farmerId || "-",
+        "Alamat": report.farmerAddress || "-",
+        "Metode Perkawinan": report.breedingType?.replace('-', ' ') || "-",
+        "Jenis Induk": report.damBreed || "-",
+        "Eartag Induk": report.damEartag || "-",
+        "Jenis Pejantan": report.sireBreed || "-",
+        "Eartag Pejantan": report.sireEartag || "-",
+        "Tanggal Lahir Pedet": report.birthDate || "-",
+        "Jenis Kelamin Pedet": report.offspringSex || "-",
+        "Jumlah Pedet": report.offspringCount || 0,
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Data Kelahiran");
+      
+      const timestamp = format(new Date(), 'yyyy-MM-dd_HHmm');
+      XLSX.writeFile(wb, `Laporan_Kelahiran_Mateng_${timestamp}.xlsx`);
+
+      toast({
+        title: "Unduh Berhasil",
+        description: "Laporan telah berhasil diekspor ke format Excel.",
+      });
+    } catch (error) {
+      console.error("Export error:", error);
+      toast({
+        variant: "destructive",
+        title: "Gagal Mengunduh",
+        description: "Terjadi kesalahan saat memproses file Excel.",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const handleDelete = (reportId: string, isMock?: boolean) => {
     if (isMock) {
       toast({ title: "Data Contoh", description: "Data contoh tidak dapat dihapus." })
@@ -217,7 +270,6 @@ export default function DataLaporanPage() {
     if (!editingReport) return
     setIsSaving(true)
     const docRef = doc(db, 'reports', editingReport.id)
-    
     const { id, ...dataToUpdate } = editingReport
     
     updateDoc(docRef, dataToUpdate)
@@ -278,8 +330,13 @@ export default function DataLaporanPage() {
                   <h1 className="text-2xl md:text-3xl font-headline font-bold text-[#064E3B]">Arsip Laporan</h1>
                   <p className="text-sm text-muted-foreground font-medium">Monitoring data kelahiran ternak Mateng secara real-time.</p>
                 </div>
-                <Button className="w-full md:w-auto bg-[#064E3B] hover:bg-[#064E3B]/90 text-white rounded-xl gap-2 font-bold px-6 h-12 shadow-md transition-all active:scale-95">
-                  <Download className="size-5" /> Unduh Laporan
+                <Button 
+                  onClick={handleExportExcel}
+                  disabled={isExporting}
+                  className="w-full md:w-auto bg-[#064E3B] hover:bg-[#064E3B]/90 text-white rounded-xl gap-2 font-bold px-6 h-12 shadow-md transition-all active:scale-95"
+                >
+                  {isExporting ? <Loader2 className="animate-spin size-5" /> : <Download className="size-5" />}
+                  Unduh Laporan
                 </Button>
               </CardContent>
             </Card>
