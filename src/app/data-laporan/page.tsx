@@ -150,7 +150,7 @@ export default function DataLaporanPage() {
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  Array.from({ length: 5 }).map((_, i) => (
+                  Array.from({ length: 8 }).map((_, i) => (
                     <TableRow key={i}>
                       <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                       <TableCell>
@@ -166,8 +166,12 @@ export default function DataLaporanPage() {
                     </TableRow>
                   ))
                 ) : filteredReports.length > 0 ? (
-                  filteredReports.map((report: any) => (
-                    <TableRow key={report.id} className="hover:bg-muted/50 transition-colors group">
+                  filteredReports.map((report: any, idx) => (
+                    <TableRow 
+                      key={report.id} 
+                      className="hover:bg-muted/50 transition-colors group animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
+                      style={{ animationDelay: `${idx * 40}ms` }}
+                    >
                       <TableCell className="whitespace-nowrap font-medium text-muted-foreground text-xs">
                         <div className="flex items-center gap-2">
                           <Calendar className="size-3.5 text-[#064E3B]" />
@@ -211,7 +215,8 @@ export default function DataLaporanPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-32">
+                    <TableCell colSpan={6} className="text-center py-32 text-muted-foreground/50 italic animate-in fade-in duration-700">
+                      Cloud database sinkron. Belum ada data laporan yang tersedia.
                     </TableCell>
                   </TableRow>
                 )}
@@ -222,7 +227,7 @@ export default function DataLaporanPage() {
       </Card>
       
       {error && (
-        <Card className="border-red-200 bg-red-50">
+        <Card className="border-red-200 bg-red-50 animate-in bounce-in duration-300">
           <CardContent className="p-4 flex items-center gap-3 text-red-700 text-sm font-bold">
             <RefreshCw className="size-5 animate-spin" />
             Sedang mencoba menyambung ulang ke Cloud Store...
