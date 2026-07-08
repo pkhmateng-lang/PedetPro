@@ -90,10 +90,6 @@ export default function DataLaporanPage() {
       <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
         <div className="space-y-1">
           <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Pusat Laporan</h1>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Database className="size-4" />
-            <span className="text-sm font-medium">Cloud Store: {loading ? "Sinkronisasi..." : "Terhubung"}</span>
-          </div>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
            <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white font-bold rounded-xl gap-2 px-6">
