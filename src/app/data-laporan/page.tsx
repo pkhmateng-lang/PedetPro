@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, Undo2, Download, MapPin, Calendar, Database, Trash2, RefreshCw } from "lucide-react"
+import { Search, Undo2, Download, MapPin, Calendar, Trash2, RefreshCw } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, orderBy, doc, deleteDoc } from "firebase/firestore"
@@ -212,13 +212,6 @@ export default function DataLaporanPage() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-32">
-                      <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
-                        <Database className="size-12 text-muted-foreground" />
-                        <div className="space-y-1">
-                          <p className="text-foreground font-bold text-lg">Belum Ada Laporan</p>
-                          <p className="text-sm text-muted-foreground">Data di Cloud Store akan muncul di sini.</p>
-                        </div>
-                      </div>
                     </TableCell>
                   </TableRow>
                 )}
