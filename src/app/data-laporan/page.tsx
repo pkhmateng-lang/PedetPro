@@ -14,12 +14,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, Undo2, Download, Loader2, MapPin, Calendar, Database, Users, RefreshCw } from "lucide-react"
+import { Search, Undo2, Download, Loader2, MapPin, Calendar, Database, Trash2, RefreshCw } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
-import { collection, query, orderBy } from "firebase/firestore"
+import { collection, query, orderBy, doc, deleteDoc } from "firebase/firestore"
 import { format } from "date-fns"
 import { Badge } from "@/components/ui/badge"
+import { toast } from "@/hooks/use-toast"
+import { errorEmitter } from "@/firebase/error-emitter"
+import { FirestorePermissionError } from "@/firebase/errors"
 
 export default function DataLaporanPage() {
   const db = useFirestore()
@@ -48,6 +51,24 @@ export default function DataLaporanPage() {
     })
   }, [reports, searchQuery, filterPuskeswan])
 
+  const handleDelete = (reportId: string) => {
+    if (!confirm("Apakah Anda yakin ingin menghapus laporan ini?")) return;
+
+    const docRef = doc(db, 'reports', reportId);
+    deleteDoc(docRef).catch(async (err) => {
+      const permissionError = new FirestorePermissionError({
+        path: docRef.path,
+        operation: 'delete',
+      });
+      errorEmitter.emit('permission-error', permissionError);
+    });
+
+    toast({
+      title: "Laporan Dihapus",
+      description: "Data telah dihapus dari database cloud.",
+    });
+  }
+
   if (!isMounted) return null;
 
   return (
@@ -70,7 +91,7 @@ export default function DataLaporanPage() {
           <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Pusat Laporan</h1>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Database className="size-4" />
-            <span className="text-sm font-medium">Status Database: {db ? "Terhubung" : "Menghubungkan..."}</span>
+            <span className="text-sm font-medium">Firebase Store: {db ? "Terhubung" : "Menghubungkan..."}</span>
           </div>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
@@ -124,22 +145,23 @@ export default function DataLaporanPage() {
                 <TableRow>
                   <TableHead className="font-bold text-[#064E3B] w-[150px]">Waktu Lahir</TableHead>
                   <TableHead className="font-bold text-[#064E3B]">Peternak & Alamat</TableHead>
-                  <TableHead className="font-bold text-[#064E3B]">Asal Puskeswan</TableHead>
-                  <TableHead className="font-bold text-[#064E3B]">Petugas Pelapor</TableHead>
-                  <TableHead className="font-bold text-[#064E3B]">Spesifikasi Anakan</TableHead>
+                  <TableHead className="font-bold text-[#064E3B]">Puskeswan</TableHead>
+                  <TableHead className="font-bold text-[#064E3B]">Petugas</TableHead>
+                  <TableHead className="font-bold text-[#064E3B]">Anakan</TableHead>
+                  <TableHead className="font-bold text-[#064E3B] w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-24">
+                    <TableCell colSpan={6} className="text-center py-24">
                       <Loader2 className="animate-spin mx-auto text-[#064E3B] size-8 mb-2" />
-                      <p className="text-sm text-muted-foreground font-medium">Mengambil data dari Cloud...</p>
+                      <p className="text-sm text-muted-foreground font-medium">Sinkronisasi Firestore...</p>
                     </TableCell>
                   </TableRow>
                 ) : filteredReports.length > 0 ? (
                   filteredReports.map((report: any) => (
-                    <TableRow key={report.id} className="hover:bg-muted/50 transition-colors">
+                    <TableRow key={report.id} className="hover:bg-muted/50 transition-colors group">
                       <TableCell className="whitespace-nowrap font-medium text-muted-foreground text-xs">
                         <div className="flex items-center gap-2">
                           <Calendar className="size-3.5 text-[#064E3B]" />
@@ -151,7 +173,7 @@ export default function DataLaporanPage() {
                           <span className="font-bold text-[#064E3B] text-sm">{report.farmerName}</span>
                           <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
                             <MapPin className="size-3 shrink-0" />
-                            <span className="truncate max-w-[180px]">{report.farmerAddress || 'Alamat tidak ada'}</span>
+                            <span className="truncate max-w-[150px]">{report.farmerAddress || 'Alamat tidak ada'}</span>
                           </div>
                         </div>
                       </TableCell>
@@ -161,35 +183,34 @@ export default function DataLaporanPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="size-6 rounded-full bg-secondary/20 flex items-center justify-center text-[10px] font-bold text-[#064E3B]">
-                            {report.officerName?.charAt(0)}
-                          </div>
-                          <span className="text-xs font-semibold">{report.officerName}</span>
-                        </div>
+                        <span className="text-xs font-semibold">{report.officerName}</span>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col text-[10px] space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-muted-foreground">Jenis:</span>
-                            <span className="font-bold uppercase">{report.offspringSex || '-'}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-muted-foreground">Jumlah:</span>
-                            <span className="font-bold">{report.offspringCount || 1} ekor</span>
-                          </div>
+                          <span className="font-bold uppercase text-[#064E3B]">{report.offspringSex || '-'}</span>
+                          <span className="text-muted-foreground">{report.offspringCount || 1} ekor</span>
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => handleDelete(report.id)}
+                          className="size-8 text-muted-foreground hover:text-destructive transition-colors"
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-32">
+                    <TableCell colSpan={6} className="text-center py-32">
                       <div className="flex flex-col items-center justify-center space-y-3 opacity-40">
                         <Database className="size-12 text-muted-foreground" />
                         <div className="space-y-1">
                           <p className="text-foreground font-bold text-lg">Belum Ada Laporan</p>
-                          <p className="text-sm text-muted-foreground">Data yang diinput oleh petugas akan muncul di sini.</p>
+                          <p className="text-sm text-muted-foreground">Data di Firebase Store akan muncul di sini.</p>
                         </div>
                       </div>
                     </TableCell>
@@ -205,7 +226,7 @@ export default function DataLaporanPage() {
         <Card className="border-red-200 bg-red-50">
           <CardContent className="p-4 flex items-center gap-3 text-red-700 text-sm font-bold">
             <RefreshCw className="size-5 animate-spin" />
-            Terjadi masalah izin database. Mohon tunggu sebentar selagi sistem memperbarui Security Rules...
+            Izin Database sedang diperbarui. Mohon tunggu 1 menit selagi Security Rules sinkron...
           </CardContent>
         </Card>
       )}

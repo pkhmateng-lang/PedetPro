@@ -34,7 +34,7 @@
   "firestore": {
     "/reports/{reportId}": {
       "schema": "BirthReport",
-      "description": "Collection of all birth reports submitted by officers. Public access enabled. Force redeploy: 1740567000"
+      "description": "Collection of all birth reports. Public access enabled. Force redeploy: 1740571000"
     }
   }
 }

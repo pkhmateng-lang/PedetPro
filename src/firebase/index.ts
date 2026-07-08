@@ -13,7 +13,7 @@ let auth: Auth;
 
 /**
  * Initializes Firebase services.
- * Persistence is disabled to prevent IndexedDB corruption issues.
+ * Offline persistence is disabled to avoid sync issues in the development environment.
  */
 export function initializeFirebase() {
   if (typeof window !== 'undefined') {
