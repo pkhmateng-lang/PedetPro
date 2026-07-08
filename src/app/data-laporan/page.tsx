@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Search, Undo2, Download, Loader2, MapPin, Calendar, Database, Trash2, RefreshCw } from "lucide-react"
+import { Search, Undo2, Download, MapPin, Calendar, Database, Trash2, RefreshCw } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, orderBy, doc, deleteDoc } from "firebase/firestore"
@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "@/hooks/use-toast"
 import { errorEmitter } from "@/firebase/error-emitter"
 import { FirestorePermissionError } from "@/firebase/errors"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function DataLaporanPage() {
   const db = useFirestore()
@@ -91,7 +92,7 @@ export default function DataLaporanPage() {
           <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Pusat Laporan</h1>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Database className="size-4" />
-            <span className="text-sm font-medium">Firebase Store: {db ? "Terhubung" : "Menghubungkan..."}</span>
+            <span className="text-sm font-medium">Cloud Store: {loading ? "Sinkronisasi..." : "Terhubung"}</span>
           </div>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
@@ -153,12 +154,21 @@ export default function DataLaporanPage() {
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-24">
-                      <Loader2 className="animate-spin mx-auto text-[#064E3B] size-8 mb-2" />
-                      <p className="text-sm text-muted-foreground font-medium">Sinkronisasi Firestore...</p>
-                    </TableCell>
-                  </TableRow>
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell>
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-3 w-48" />
+                        </div>
+                      </TableCell>
+                      <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                      <TableCell><Skeleton className="h-8 w-8 rounded-md" /></TableCell>
+                    </TableRow>
+                  ))
                 ) : filteredReports.length > 0 ? (
                   filteredReports.map((report: any) => (
                     <TableRow key={report.id} className="hover:bg-muted/50 transition-colors group">
@@ -210,7 +220,7 @@ export default function DataLaporanPage() {
                         <Database className="size-12 text-muted-foreground" />
                         <div className="space-y-1">
                           <p className="text-foreground font-bold text-lg">Belum Ada Laporan</p>
-                          <p className="text-sm text-muted-foreground">Data di Firebase Store akan muncul di sini.</p>
+                          <p className="text-sm text-muted-foreground">Data di Cloud Store akan muncul di sini.</p>
                         </div>
                       </div>
                     </TableCell>
@@ -226,7 +236,7 @@ export default function DataLaporanPage() {
         <Card className="border-red-200 bg-red-50">
           <CardContent className="p-4 flex items-center gap-3 text-red-700 text-sm font-bold">
             <RefreshCw className="size-5 animate-spin" />
-            Izin Database sedang diperbarui. Mohon tunggu 1 menit selagi Security Rules sinkron...
+            Sedang mencoba menyambung ulang ke Cloud Store...
           </CardContent>
         </Card>
       )}

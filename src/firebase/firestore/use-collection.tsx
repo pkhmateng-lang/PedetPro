@@ -31,9 +31,9 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
         setError(null);
       },
       async (err) => {
-        // Robustly detect the collection path for clearer error reporting
         let path = 'unknown_collection';
         try {
+          // Attempt to extract the path from the query object for better debugging
           const q = query as any;
           if (q._query && q._query.path) {
             path = q._query.path.segments.join('/');
@@ -41,8 +41,7 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
             path = q.path;
           }
         } catch (e) {
-          // fallback to generic name if detection fails
-          path = 'reports'; 
+          path = 'reports'; // Default fallback for this project
         }
 
         const permissionError = new FirestorePermissionError({

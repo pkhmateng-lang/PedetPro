@@ -12,8 +12,8 @@ let firestore: Firestore;
 let auth: Auth;
 
 /**
- * Initializes Firebase services.
- * Offline persistence is disabled to avoid sync issues in the development environment.
+ * Initializes Firebase services with high-performance cloud-only sync.
+ * persistence is disabled to avoid IndexedDB conflicts across multiple tabs.
  */
 export function initializeFirebase() {
   if (typeof window !== 'undefined') {
@@ -25,6 +25,7 @@ export function initializeFirebase() {
       }
       
       if (!firestore) {
+        // Standard high-performance initialization
         firestore = getFirestore(app);
       }
       
