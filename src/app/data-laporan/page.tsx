@@ -25,6 +25,46 @@ import { errorEmitter } from "@/firebase/error-emitter"
 import { FirestorePermissionError } from "@/firebase/errors"
 import { Skeleton } from "@/components/ui/skeleton"
 
+// Contoh data untuk tampilan awal
+const MOCK_REPORTS = [
+  {
+    id: "mock-1",
+    farmerName: "Ahmad Subagjo",
+    farmerAddress: "Desa Topoyo, Mateng",
+    puskeswan: "puskeswan-topoyo",
+    officerName: "Alfons B",
+    birthDate: "2024-02-25",
+    offspringSex: "betina",
+    offspringCount: 1,
+    breedingType: "inseminasi-buatan",
+    isMock: true
+  },
+  {
+    id: "mock-2",
+    farmerName: "I Made Suardana",
+    farmerAddress: "Kec. Karossa, Mateng",
+    puskeswan: "puskeswan-karossa",
+    officerName: "Asri Rasyid",
+    birthDate: "2024-02-24",
+    offspringSex: "jantan",
+    offspringCount: 1,
+    breedingType: "kawin-alam",
+    isMock: true
+  },
+  {
+    id: "mock-3",
+    farmerName: "Siti Aminah",
+    farmerAddress: "Desa Pangale, Mateng",
+    puskeswan: "puskeswan-pangale",
+    officerName: "drh. Ketut Elok",
+    birthDate: "2024-02-23",
+    offspringSex: "jantan",
+    offspringCount: 1,
+    breedingType: "inseminasi-buatan",
+    isMock: true
+  }
+]
+
 export default function DataLaporanPage() {
   const db = useFirestore()
   const [isMounted, setIsMounted] = useState(false)
@@ -40,19 +80,32 @@ export default function DataLaporanPage() {
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
   }, [db])
 
-  const { data: reports, loading, error } = useCollection(reportsQuery)
+  const { data: cloudReports, loading, error } = useCollection(reportsQuery)
+
+  const allReports = useMemo(() => {
+    // Jika ada data di cloud, gunakan data cloud. Jika kosong, gunakan mock.
+    const baseData = cloudReports.length > 0 ? cloudReports : MOCK_REPORTS;
+    return baseData;
+  }, [cloudReports])
 
   const filteredReports = useMemo(() => {
-    if (!reports) return []
-    return reports.filter((r: any) => {
+    return allReports.filter((r: any) => {
       const searchStr = ((r.farmerName || "") + (r.officerName || "") + (r.farmerAddress || "") + (r.damEartag || "")).toLowerCase()
       const matchSearch = searchStr.includes(searchQuery.toLowerCase())
       const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
       return matchSearch && matchPuskeswan
     })
-  }, [reports, searchQuery, filterPuskeswan])
+  }, [allReports, searchQuery, filterPuskeswan])
 
-  const handleDelete = (reportId: string) => {
+  const handleDelete = (reportId: string, isMock?: boolean) => {
+    if (isMock) {
+      toast({
+        title: "Data Contoh",
+        description: "Data contoh tidak dapat dihapus dari database cloud.",
+      })
+      return
+    }
+
     if (!confirm("Apakah Anda yakin ingin menghapus laporan ini?")) return;
 
     const docRef = doc(db, 'reports', reportId);
@@ -180,7 +233,10 @@ export default function DataLaporanPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="font-bold text-[#064E3B] text-sm">{report.farmerName}</span>
+                          <span className="font-bold text-[#064E3B] text-sm">
+                            {report.farmerName}
+                            {report.isMock && <Badge variant="outline" className="ml-2 text-[8px] h-4 px-1 uppercase border-[#064E3B] text-[#064E3B]">Contoh</Badge>}
+                          </span>
                           <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
                             <MapPin className="size-3 shrink-0" />
                             <span className="truncate max-w-[150px]">{report.farmerAddress || 'Alamat tidak ada'}</span>
@@ -205,7 +261,7 @@ export default function DataLaporanPage() {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          onClick={() => handleDelete(report.id)}
+                          onClick={() => handleDelete(report.id, report.isMock)}
                           className="size-8 text-muted-foreground hover:text-destructive transition-colors"
                         >
                           <Trash2 className="size-4" />
