@@ -34,7 +34,7 @@
   "firestore": {
     "/reports/{reportId}": {
       "schema": "BirthReport",
-      "description": "Penyimpanan pusat laporan kelahiran. Akses publik diaktifkan untuk sinkronisasi tim. Force redeploy: 1740615900"
+      "description": "Penyimpanan pusat laporan kelahiran. Akses publik diaktifkan untuk sinkronisasi tim. Force redeploy: 1740616800"
     }
   }
 }
