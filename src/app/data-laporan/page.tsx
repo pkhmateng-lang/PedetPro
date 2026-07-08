@@ -42,7 +42,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/tabs"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, orderBy, doc, deleteDoc, updateDoc } from "firebase/firestore"
 import { format } from "date-fns"
@@ -79,6 +79,20 @@ const MOCK_REPORTS = [
     breedingType: "kawin-alam",
     damBreed: "Bali",
     damEartag: "7601020055",
+    isMock: true
+  },
+  {
+    id: "mock-3",
+    farmerName: "Siti Aminah",
+    farmerAddress: "Pangale, Mateng",
+    puskeswan: "puskeswan-pangale",
+    officerName: "drh. Ketut Elok",
+    birthDate: "2026-01-24",
+    offspringSex: "jantan",
+    offspringCount: 1,
+    breedingType: "inseminasi-buatan",
+    damBreed: "Limousin",
+    damEartag: "7601030088",
     isMock: true
   }
 ]
@@ -249,11 +263,17 @@ export default function DataLaporanPage() {
                 </TableHeader>
                 <TableBody>
                   {loading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}><TableCell colSpan={5}><Skeleton className="h-10 w-full" /></TableCell></TableRow>
+                    Array.from({ length: 8 }).map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell colSpan={5}><Skeleton className="h-10 w-full" /></TableCell>
+                      </TableRow>
                     ))
-                  ) : filteredReports.map((report: any) => (
-                    <TableRow key={report.id}>
+                  ) : filteredReports.map((report: any, index: number) => (
+                    <TableRow 
+                      key={report.id}
+                      className="animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
                       <TableCell className="text-xs font-medium">{report.birthDate ? format(new Date(report.birthDate), 'dd MMM yyyy') : '-'}</TableCell>
                       <TableCell className="font-bold text-[#064E3B]">{report.officerName}</TableCell>
                       <TableCell className="text-xs font-semibold uppercase">{report.puskeswan?.replace('puskeswan-', '').replace('-', ' ')}</TableCell>
@@ -271,11 +291,17 @@ export default function DataLaporanPage() {
             {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
               {loading ? (
-                Array.from({ length: 3 }).map((_, i) => (
+                Array.from({ length: 5 }).map((_, i) => (
                   <Skeleton key={i} className="h-32 w-full rounded-2xl" />
                 ))
-              ) : filteredReports.map((report: any) => (
-                <Accordion key={report.id} type="single" collapsible className="w-full">
+              ) : filteredReports.map((report: any, index: number) => (
+                <Accordion 
+                  key={report.id} 
+                  type="single" 
+                  collapsible 
+                  className="w-full animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
                   <AccordionItem value={report.id} className="border rounded-2xl bg-white px-4 py-2 shadow-sm border-slate-100">
                     <AccordionTrigger className="hover:no-underline py-4">
                       <div className="flex flex-col items-start text-left space-y-1 w-full">
