@@ -41,7 +41,7 @@ export function initializeFirebase() {
 }
 
 /**
- * Memoization hook for Firebase references.
+ * Memoization hook for Firebase references to prevent unnecessary re-subscriptions.
  */
 export function useMemoFirebase<T>(factory: () => T, deps: any[]): T {
   return useMemo(factory, deps);
