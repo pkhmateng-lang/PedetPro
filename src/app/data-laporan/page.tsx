@@ -140,8 +140,9 @@ export default function DataLaporanPage() {
 
   const currentAvailableOfficers = useMemo(() => {
     if (filterPuskeswan === "all") {
-      // Return all officers from all regions if "All" is selected
-      return Object.values(OFFICER_MAP).flat().sort()
+      // Return unique officers from all regions if "All" is selected to avoid duplicate keys like "Lainnya"
+      const allNames = Object.values(OFFICER_MAP).flat()
+      return Array.from(new Set(allNames)).sort()
     }
     return OFFICER_MAP[filterPuskeswan] || []
   }, [filterPuskeswan])
