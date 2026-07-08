@@ -106,12 +106,31 @@ const OFFICER_MAP: Record<string, string[]> = {
   "puskeswan-topoyo": ["Alfons B", "drh. Iqbal Djamil", "Fitriani", "Haslim", "Rizky A", "Lainnya"]
 }
 
+const MONTHS = [
+  { value: "1", label: "Januari" },
+  { value: "2", label: "Februari" },
+  { value: "3", label: "Maret" },
+  { value: "4", label: "April" },
+  { value: "5", label: "Mei" },
+  { value: "6", label: "Juni" },
+  { value: "7", label: "Juli" },
+  { value: "8", label: "Agustus" },
+  { value: "9", label: "September" },
+  { value: "10", label: "Oktober" },
+  { value: "11", label: "November" },
+  { value: "12", label: "Desember" },
+]
+
+const YEARS = ["2024", "2025", "2026", "2027"]
+
 export default function DataLaporanPage() {
   const db = useFirestore()
   const [isMounted, setIsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [filterPuskeswan, setFilterPuskeswan] = useState("all")
   const [filterOfficer, setFilterOfficer] = useState("all")
+  const [filterMonth, setFilterMonth] = useState("all")
+  const [filterYear, setFilterYear] = useState("all")
   
   // Edit State
   const [editingReport, setEditingReport] = useState<any>(null)
@@ -140,7 +159,6 @@ export default function DataLaporanPage() {
 
   const currentAvailableOfficers = useMemo(() => {
     if (filterPuskeswan === "all") {
-      // Return unique officers from all regions if "All" is selected to avoid duplicate keys like "Lainnya"
       const allNames = Object.values(OFFICER_MAP).flat()
       return Array.from(new Set(allNames)).sort()
     }
@@ -153,9 +171,25 @@ export default function DataLaporanPage() {
       const matchSearch = searchStr.includes(searchQuery.toLowerCase())
       const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
       const matchOfficer = filterOfficer === "all" || r.officerName === filterOfficer
-      return matchSearch && matchPuskeswan && matchOfficer
+      
+      let matchMonth = true
+      let matchYear = true
+      
+      if (r.birthDate) {
+        const date = new Date(r.birthDate)
+        if (filterMonth !== "all") {
+          matchMonth = (date.getMonth() + 1).toString() === filterMonth
+        }
+        if (filterYear !== "all") {
+          matchYear = date.getFullYear().toString() === filterYear
+        }
+      } else if (filterMonth !== "all" || filterYear !== "all") {
+        return false
+      }
+      
+      return matchSearch && matchPuskeswan && matchOfficer && matchMonth && matchYear
     })
-  }, [allReports, searchQuery, filterPuskeswan, filterOfficer])
+  }, [allReports, searchQuery, filterPuskeswan, filterOfficer, filterMonth, filterYear])
 
   const handleDelete = (reportId: string, isMock?: boolean) => {
     if (isMock) {
@@ -252,8 +286,8 @@ export default function DataLaporanPage() {
 
             <Card className="border-none shadow-sm bg-white overflow-hidden mb-6 transition-all">
               <CardContent className="p-4 md:p-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="relative group md:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="relative group lg:col-span-2">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground group-focus-within:text-[#064E3B] transition-colors" />
                     <Input 
                       placeholder="Cari Peternak atau Petugas..."
@@ -288,6 +322,33 @@ export default function DataLaporanPage() {
                       <SelectItem value="all">Semua Petugas</SelectItem>
                       {currentAvailableOfficers.map((officer) => (
                         <SelectItem key={officer} value={officer}>{officer}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={filterMonth} onValueChange={setFilterMonth}>
+                    <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-12 px-4 font-medium focus:ring-2 focus:ring-[#064E3B]/20 transition-all">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="size-4 text-[#064E3B]" />
+                        <SelectValue placeholder="Semua Bulan" />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-none shadow-xl">
+                      <SelectItem value="all">Semua Bulan</SelectItem>
+                      {MONTHS.map((m) => (
+                        <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={filterYear} onValueChange={setFilterYear}>
+                    <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-12 px-4 font-medium focus:ring-2 focus:ring-[#064E3B]/20 transition-all">
+                      <SelectValue placeholder="Semua Tahun" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-none shadow-xl">
+                      <SelectItem value="all">Semua Tahun</SelectItem>
+                      {YEARS.map((y) => (
+                        <SelectItem key={y} value={y}>{y}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
