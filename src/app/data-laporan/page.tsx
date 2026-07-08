@@ -23,9 +23,10 @@ import {
   Trash2, 
   LayoutGrid, 
   BarChart3,
-  ChevronDown,
   User,
-  Info
+  Pencil,
+  Save,
+  Loader2
 } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { 
@@ -34,9 +35,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/tabs"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
-import { collection, query, orderBy, doc, deleteDoc } from "firebase/firestore"
+import { collection, query, orderBy, doc, deleteDoc, updateDoc } from "firebase/firestore"
 import { format } from "date-fns"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/hooks/use-toast"
@@ -80,6 +88,11 @@ export default function DataLaporanPage() {
   const [isMounted, setIsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [filterPuskeswan, setFilterPuskeswan] = useState("all")
+  
+  // Edit State
+  const [editingReport, setEditingReport] = useState<any>(null)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
@@ -90,7 +103,7 @@ export default function DataLaporanPage() {
     return query(collection(db, 'reports'), orderBy('createdAt', 'desc'))
   }, [db])
 
-  const { data: cloudReports, loading, error } = useCollection(reportsQuery)
+  const { data: cloudReports, loading } = useCollection(reportsQuery)
 
   const allReports = useMemo(() => {
     return cloudReports.length > 0 ? cloudReports : MOCK_REPORTS;
@@ -116,6 +129,42 @@ export default function DataLaporanPage() {
       errorEmitter.emit('permission-error', new FirestorePermissionError({ path: docRef.path, operation: 'delete' }));
     });
     toast({ title: "Laporan Dihapus", description: "Data telah dihapus dari cloud." });
+  }
+
+  const handleEditClick = (report: any) => {
+    if (report.isMock) {
+      toast({ title: "Data Contoh", description: "Data contoh tidak dapat diedit." })
+      return
+    }
+    setEditingReport({ ...report })
+    setIsEditDialogOpen(true)
+  }
+
+  const handleUpdateReport = () => {
+    if (!editingReport) return
+    setIsSaving(true)
+    const docRef = doc(db, 'reports', editingReport.id)
+    
+    const { id, ...dataToUpdate } = editingReport
+    
+    updateDoc(docRef, dataToUpdate)
+      .then(() => {
+        toast({ title: "Laporan Diperbarui", description: "Data berhasil disimpan ke cloud." })
+        setIsEditDialogOpen(false)
+        setEditingReport(null)
+      })
+      .catch(async (err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({ 
+          path: docRef.path, 
+          operation: 'update',
+          requestResourceData: dataToUpdate
+        }));
+      })
+      .finally(() => setIsSaving(false))
+  }
+
+  const updateEditField = (field: string, value: any) => {
+    setEditingReport((prev: any) => ({ ...prev, [field]: value }))
   }
 
   if (!isMounted) return null;
@@ -209,7 +258,8 @@ export default function DataLaporanPage() {
                       <TableCell className="font-bold text-[#064E3B]">{report.officerName}</TableCell>
                       <TableCell className="text-xs font-semibold uppercase">{report.puskeswan?.replace('puskeswan-', '').replace('-', ' ')}</TableCell>
                       <TableCell className="text-sm font-medium">{report.farmerName}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right flex items-center justify-end gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => handleEditClick(report)}><Pencil className="size-4 text-[#064E3B]" /></Button>
                         <Button variant="ghost" size="icon" onClick={() => handleDelete(report.id, report.isMock)}><Trash2 className="size-4 text-destructive" /></Button>
                       </TableCell>
                     </TableRow>
@@ -218,7 +268,7 @@ export default function DataLaporanPage() {
               </Table>
             </div>
 
-            {/* Mobile Cards (Accordion) */}
+            {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
               {loading ? (
                 Array.from({ length: 3 }).map((_, i) => (
@@ -268,14 +318,10 @@ export default function DataLaporanPage() {
                           <Badge variant="outline" className="rounded-lg border-slate-200 text-slate-500 uppercase text-[10px] font-bold">
                             {report.breedingType?.replace('-', ' ')}
                           </Badge>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => handleDelete(report.id, report.isMock)}
-                            className="text-destructive font-bold text-xs"
-                          >
-                            Hapus Laporan
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleEditClick(report)} className="text-[#064E3B] font-bold text-xs">Edit</Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDelete(report.id, report.isMock)} className="text-destructive font-bold text-xs">Hapus</Button>
+                          </div>
                         </div>
                       </div>
                     </AccordionContent>
@@ -298,6 +344,104 @@ export default function DataLaporanPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-[#064E3B]">Edit Laporan Keseluruhan</DialogTitle>
+          </DialogHeader>
+          
+          {editingReport && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <Label>Nama Petugas</Label>
+                  <Input value={editingReport.officerName} onChange={(e) => updateEditField('officerName', e.target.value)} className="bg-slate-50" />
+                </div>
+                <div className="space-y-1">
+                  <Label>Nama Peternak</Label>
+                  <Input value={editingReport.farmerName} onChange={(e) => updateEditField('farmerName', e.target.value)} className="bg-slate-50" />
+                </div>
+                <div className="space-y-1">
+                  <Label>Alamat Peternak</Label>
+                  <Input value={editingReport.farmerAddress} onChange={(e) => updateEditField('farmerAddress', e.target.value)} className="bg-slate-50" />
+                </div>
+                <div className="space-y-1">
+                  <Label>Puskeswan</Label>
+                  <Select value={editingReport.puskeswan} onValueChange={(v) => updateEditField('puskeswan', v)}>
+                    <SelectTrigger className="bg-slate-50">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="puskeswan-budong-budong">Puskeswan Budong-Budong</SelectItem>
+                      <SelectItem value="puskeswan-karossa">Puskeswan Karossa</SelectItem>
+                      <SelectItem value="puskeswan-pangale">Puskeswan Pangale</SelectItem>
+                      <SelectItem value="puskeswan-tobadak">Puskeswan Tobadak</SelectItem>
+                      <SelectItem value="puskeswan-topoyo">Puskeswan Topoyo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label>Jenis Induk</Label>
+                    <Input value={editingReport.damBreed} onChange={(e) => updateEditField('damBreed', e.target.value)} className="bg-slate-50" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label>Eartag Induk</Label>
+                    <Input value={editingReport.damEartag} onChange={(e) => updateEditField('damEartag', e.target.value)} className="bg-slate-50" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label>Jns Kelamin Anak</Label>
+                    <Select value={editingReport.offspringSex} onValueChange={(v) => updateEditField('offspringSex', v)}>
+                      <SelectTrigger className="bg-slate-50">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="jantan">Jantan</SelectItem>
+                        <SelectItem value="betina">Betina</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label>Jumlah Anak</Label>
+                    <Input type="number" value={editingReport.offspringCount} onChange={(e) => updateEditField('offspringCount', parseInt(e.target.value))} className="bg-slate-50" />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label>Metode Perkawinan</Label>
+                  <Select value={editingReport.breedingType} onValueChange={(v) => updateEditField('breedingType', v)}>
+                    <SelectTrigger className="bg-slate-50">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="kawin-alam">Kawin Alam</SelectItem>
+                      <SelectItem value="inseminasi-buatan">Inseminasi Buatan</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label>Tanggal Lahir</Label>
+                  <Input type="date" value={editingReport.birthDate} onChange={(e) => updateEditField('birthDate', e.target.value)} className="bg-slate-50" />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="mt-6">
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} className="rounded-xl">Batal</Button>
+            <Button onClick={handleUpdateReport} disabled={isSaving} className="bg-[#064E3B] text-white rounded-xl gap-2 px-8">
+              {isSaving ? <Loader2 className="animate-spin size-4" /> : <Save className="size-4" />}
+              Simpan Perubahan
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
