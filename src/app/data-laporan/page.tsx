@@ -213,14 +213,14 @@ export default function DataLaporanPage() {
           </TabsList>
 
           <TabsContent value="tabel" className="space-y-6 outline-none">
-            {/* Header with Card Background */}
-            <Card className="hidden md:block border-none shadow-sm bg-white overflow-hidden mb-6">
-              <CardContent className="p-6 flex justify-between items-center">
+            {/* Header with Card Background - Now visible on all devices */}
+            <Card className="border-none shadow-sm bg-white overflow-hidden mb-6">
+              <CardContent className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="space-y-1">
-                  <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Laporan</h1>
+                  <h1 className="text-2xl md:text-3xl font-headline font-bold text-[#064E3B]">Arsip Laporan</h1>
                   <p className="text-sm text-muted-foreground font-medium">Monitoring data kelahiran ternak Mateng secara real-time.</p>
                 </div>
-                <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white rounded-xl gap-2 font-bold px-6 h-12 shadow-md transition-all active:scale-95">
+                <Button className="w-full md:w-auto bg-[#064E3B] hover:bg-[#064E3B]/90 text-white rounded-xl gap-2 font-bold px-6 h-12 shadow-md transition-all active:scale-95">
                   <Download className="size-5" /> Ekspor Data
                 </Button>
               </CardContent>
@@ -418,15 +418,27 @@ export default function DataLaporanPage() {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <Label className="font-bold text-slate-700">Nama Petugas Pelaksana</Label>
-                  <Input value={editingReport.officerName} onChange={(e) => updateEditField('officerName', e.target.value)} className="bg-slate-50 border-none h-12 rounded-xl focus:ring-2 focus:ring-[#064E3B]/20" />
+                  <input 
+                    value={editingReport.officerName} 
+                    onChange={(e) => updateEditField('officerName', e.target.value)} 
+                    className="flex h-12 w-full rounded-xl bg-slate-50 px-4 text-sm font-medium border-none focus:ring-2 focus:ring-[#064E3B]/20 outline-none" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label className="font-bold text-slate-700">Identitas Pemilik (Peternak)</Label>
-                  <Input value={editingReport.farmerName} onChange={(e) => updateEditField('farmerName', e.target.value)} className="bg-slate-50 border-none h-12 rounded-xl focus:ring-2 focus:ring-[#064E3B]/20" />
+                  <input 
+                    value={editingReport.farmerName} 
+                    onChange={(e) => updateEditField('farmerName', e.target.value)} 
+                    className="flex h-12 w-full rounded-xl bg-slate-50 px-4 text-sm font-medium border-none focus:ring-2 focus:ring-[#064E3B]/20 outline-none" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label className="font-bold text-slate-700">Domisili / Lokasi Ternak</Label>
-                  <Input value={editingReport.farmerAddress} onChange={(e) => updateEditField('farmerAddress', e.target.value)} className="bg-slate-50 border-none h-12 rounded-xl focus:ring-2 focus:ring-[#064E3B]/20" />
+                  <input 
+                    value={editingReport.farmerAddress} 
+                    onChange={(e) => updateEditField('farmerAddress', e.target.value)} 
+                    className="flex h-12 w-full rounded-xl bg-slate-50 px-4 text-sm font-medium border-none focus:ring-2 focus:ring-[#064E3B]/20 outline-none" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label className="font-bold text-slate-700">Wilayah Puskeswan</Label>
@@ -449,11 +461,19 @@ export default function DataLaporanPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="font-bold text-slate-700">Ras Indukan</Label>
-                    <Input value={editingReport.damBreed} onChange={(e) => updateEditField('damBreed', e.target.value)} className="bg-slate-50 border-none h-12 rounded-xl" />
+                    <input 
+                      value={editingReport.damBreed} 
+                      onChange={(e) => updateEditField('damBreed', e.target.value)} 
+                      className="flex h-12 w-full rounded-xl bg-slate-50 px-4 text-sm font-medium border-none outline-none" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label className="font-bold text-slate-700">Nomor Eartag</Label>
-                    <Input value={editingReport.damEartag} onChange={(e) => updateEditField('damEartag', e.target.value)} className="bg-slate-50 border-none h-12 rounded-xl" />
+                    <input 
+                      value={editingReport.damEartag} 
+                      onChange={(e) => updateEditField('damEartag', e.target.value)} 
+                      className="flex h-12 w-full rounded-xl bg-slate-50 px-4 text-sm font-medium border-none outline-none" 
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -471,7 +491,12 @@ export default function DataLaporanPage() {
                   </div>
                   <div className="space-y-2">
                     <Label className="font-bold text-slate-700">Kelahiran (Ekor)</Label>
-                    <Input type="number" value={editingReport.offspringCount} onChange={(e) => updateEditField('offspringCount', parseInt(e.target.value))} className="bg-slate-50 border-none h-12 rounded-xl" />
+                    <input 
+                      type="number" 
+                      value={editingReport.offspringCount} 
+                      onChange={(e) => updateEditField('offspringCount', parseInt(e.target.value))} 
+                      className="flex h-12 w-full rounded-xl bg-slate-50 px-4 text-sm font-medium border-none outline-none" 
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -490,7 +515,12 @@ export default function DataLaporanPage() {
                   <Label className="font-bold text-slate-700">Estimasi Tgl Lahir</Label>
                   <div className="relative">
                     <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
-                    <Input type="date" value={editingReport.birthDate} onChange={(e) => updateEditField('birthDate', e.target.value)} className="bg-slate-50 border-none h-12 rounded-xl pl-11" />
+                    <input 
+                      type="date" 
+                      value={editingReport.birthDate} 
+                      onChange={(e) => updateEditField('birthDate', e.target.value)} 
+                      className="flex h-12 w-full rounded-xl bg-slate-50 pl-11 pr-4 text-sm font-medium border-none outline-none" 
+                    />
                   </div>
                 </div>
               </div>
@@ -498,9 +528,9 @@ export default function DataLaporanPage() {
           )}
           </div>
 
-          <DialogFooterUI className="p-8 bg-slate-50 rounded-b-3xl border-t flex items-center justify-between gap-4">
-            <Button variant="ghost" onClick={() => setIsEditDialogOpen(false)} className="rounded-xl h-12 px-6 font-bold text-slate-500 hover:bg-slate-100">Batalkan</Button>
-            <Button onClick={handleUpdateReport} disabled={isSaving} className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white rounded-xl gap-2 px-10 h-12 font-bold shadow-lg transition-all active:scale-95">
+          <DialogFooterUI className="p-8 bg-slate-50 rounded-b-3xl border-t flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Button variant="ghost" onClick={() => setIsEditDialogOpen(false)} className="w-full sm:w-auto rounded-xl h-12 px-6 font-bold text-slate-500 hover:bg-slate-100">Batalkan</Button>
+            <Button onClick={handleUpdateReport} disabled={isSaving} className="w-full sm:w-auto bg-[#064E3B] hover:bg-[#064E3B]/90 text-white rounded-xl gap-2 px-10 h-12 font-bold shadow-lg transition-all active:scale-95">
               {isSaving ? <Loader2 className="animate-spin size-5" /> : <Save className="size-5" />}
               Simpan Perubahan
             </Button>
