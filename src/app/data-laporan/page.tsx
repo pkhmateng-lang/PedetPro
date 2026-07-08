@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -40,7 +40,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
+  DialogFooter as DialogFooterUI,
 } from "@/components/ui/dialog"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase"
@@ -58,7 +58,7 @@ const MOCK_REPORTS = [
     farmerName: "Ahmad Subagjo",
     farmerAddress: "Desa Topoyo, Mateng",
     puskeswan: "puskeswan-topoyo",
-    officerName: "drh. Iqbal Djamil",
+    officerName: "Anshari Saleh",
     birthDate: "2026-01-26",
     offspringSex: "betina",
     offspringCount: 1,
@@ -71,8 +71,8 @@ const MOCK_REPORTS = [
     id: "mock-2",
     farmerName: "I Made Suardana",
     farmerAddress: "Kec. Karossa, Mateng",
-    puskeswan: "puskeswan-topoyo",
-    officerName: "drh. Iqbal Djamil",
+    puskeswan: "puskeswan-karossa",
+    officerName: "Asri Rasyid",
     birthDate: "2026-01-25",
     offspringSex: "jantan",
     offspringCount: 1,
@@ -120,7 +120,6 @@ export default function DataLaporanPage() {
   const { data: cloudReports, loading } = useCollection(reportsQuery)
 
   const allReports = useMemo(() => {
-    // Optimistic merge: prioritaskan data cloud tapi tetapkan mock jika kosong
     return cloudReports.length > 0 ? cloudReports : MOCK_REPORTS;
   }, [cloudReports])
 
@@ -138,12 +137,12 @@ export default function DataLaporanPage() {
       toast({ title: "Data Contoh", description: "Data contoh tidak dapat dihapus." })
       return
     }
-    if (!confirm("Hapus laporan ini?")) return;
+    if (!confirm("Hapus laporan ini secara permanen dari Cloud?")) return;
     const docRef = doc(db, 'reports', reportId);
     deleteDoc(docRef).catch(async (err) => {
       errorEmitter.emit('permission-error', new FirestorePermissionError({ path: docRef.path, operation: 'delete' }));
     });
-    toast({ title: "Laporan Dihapus", description: "Data telah dihapus dari cloud." });
+    toast({ title: "Data Dihapus", description: "Laporan telah dihapus dari Cloud Firestore." });
   }
 
   const handleEditClick = (report: any) => {
@@ -214,15 +213,18 @@ export default function DataLaporanPage() {
           </TabsList>
 
           <TabsContent value="tabel" className="space-y-6 outline-none">
-            <div className="hidden md:flex justify-between items-center mb-6">
-              <div className="space-y-1">
-                <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Laporan</h1>
-                <p className="text-sm text-muted-foreground">Monitoring data kelahiran ternak Mateng secara real-time.</p>
-              </div>
-              <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white rounded-xl gap-2 font-bold px-6 h-12 shadow-md transition-all active:scale-95">
-                <Download className="size-5" /> Ekspor Data
-              </Button>
-            </div>
+            {/* Header with Card Background */}
+            <Card className="hidden md:block border-none shadow-sm bg-white overflow-hidden mb-6">
+              <CardContent className="p-6 flex justify-between items-center">
+                <div className="space-y-1">
+                  <h1 className="text-3xl font-headline font-bold text-[#064E3B]">Arsip Laporan</h1>
+                  <p className="text-sm text-muted-foreground font-medium">Monitoring data kelahiran ternak Mateng secara real-time.</p>
+                </div>
+                <Button className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white rounded-xl gap-2 font-bold px-6 h-12 shadow-md transition-all active:scale-95">
+                  <Download className="size-5" /> Ekspor Data
+                </Button>
+              </CardContent>
+            </Card>
 
             <Card className="border-none shadow-sm bg-white overflow-hidden mb-6 transition-all">
               <CardContent className="p-4 md:p-6">
@@ -496,13 +498,13 @@ export default function DataLaporanPage() {
           )}
           </div>
 
-          <DialogFooter className="p-8 bg-slate-50 rounded-b-3xl border-t flex items-center justify-between gap-4">
+          <DialogFooterUI className="p-8 bg-slate-50 rounded-b-3xl border-t flex items-center justify-between gap-4">
             <Button variant="ghost" onClick={() => setIsEditDialogOpen(false)} className="rounded-xl h-12 px-6 font-bold text-slate-500 hover:bg-slate-100">Batalkan</Button>
             <Button onClick={handleUpdateReport} disabled={isSaving} className="bg-[#064E3B] hover:bg-[#064E3B]/90 text-white rounded-xl gap-2 px-10 h-12 font-bold shadow-lg transition-all active:scale-95">
               {isSaving ? <Loader2 className="animate-spin size-5" /> : <Save className="size-5" />}
-              Simpan Data Cloud
+              Simpan Perubahan
             </Button>
-          </DialogFooter>
+          </DialogFooterUI>
         </DialogContent>
       </Dialog>
     </div>
