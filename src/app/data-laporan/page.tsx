@@ -273,13 +273,13 @@ export default function DataLaporanPage() {
 
           <TabsContent value="tabel" className="space-y-6 outline-none">
             <Card className="border-none shadow-sm bg-white overflow-hidden mb-6">
-              <CardContent className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="space-y-1">
+              <CardContent className="p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="space-y-1 text-center md:text-left">
                   <h1 className="text-2xl md:text-3xl font-headline font-bold text-[#064E3B]">Arsip Laporan</h1>
                   <p className="text-sm text-muted-foreground font-medium">Monitoring data kelahiran ternak Mateng secara real-time.</p>
                 </div>
                 <Button className="w-full md:w-auto bg-[#064E3B] hover:bg-[#064E3B]/90 text-white rounded-xl gap-2 font-bold px-6 h-12 shadow-md transition-all active:scale-95">
-                  <Download className="size-5" /> Ekspor Data
+                  <Download className="size-5" /> Unduh Laporan
                 </Button>
               </CardContent>
             </Card>
