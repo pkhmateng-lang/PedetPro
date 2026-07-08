@@ -26,7 +26,8 @@ import {
   User,
   Pencil,
   Save,
-  Loader2
+  Loader2,
+  Filter
 } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { 
@@ -97,11 +98,20 @@ const MOCK_REPORTS = [
   }
 ]
 
+const OFFICER_MAP: Record<string, string[]> = {
+  "puskeswan-budong-budong": ["Anshari Saleh", "Hadi", "Nur Fauzi", "Rahman", "Suprapto", "Tadi Saleh", "Lainnya"],
+  "puskeswan-karossa": ["Asri Rasyid", "Basuki", "drh. Stephani", "Hasaruddin", "Nasaruddin", "Adiatman", "Surianca", "Lainnya"],
+  "puskeswan-pangale": ["Andri", "drh. Ketut Elok", "Jarwo", "Jawaril", "Kamarudin", "Kamaruddin", "Mansyur", "Sugeng", "Lainnya"],
+  "puskeswan-tobadak": ["Aser M", "drh. Ishak", "Endang", "Feliks S", "Jupry", "Madalena", "Lainnya"],
+  "puskeswan-topoyo": ["Alfons B", "drh. Iqbal Djamil", "Fitriani", "Haslim", "Rizky A", "Lainnya"]
+}
+
 export default function DataLaporanPage() {
   const db = useFirestore()
   const [isMounted, setIsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [filterPuskeswan, setFilterPuskeswan] = useState("all")
+  const [filterOfficer, setFilterOfficer] = useState("all")
   
   // Edit State
   const [editingReport, setEditingReport] = useState<any>(null)
@@ -111,6 +121,11 @@ export default function DataLaporanPage() {
   useEffect(() => {
     setIsMounted(true)
   }, [])
+
+  // Reset officer filter when puskeswan filter changes
+  useEffect(() => {
+    setFilterOfficer("all")
+  }, [filterPuskeswan])
 
   const reportsQuery = useMemoFirebase(() => {
     if (!db) return null;
@@ -123,14 +138,23 @@ export default function DataLaporanPage() {
     return cloudReports.length > 0 ? cloudReports : MOCK_REPORTS;
   }, [cloudReports])
 
+  const currentAvailableOfficers = useMemo(() => {
+    if (filterPuskeswan === "all") {
+      // Return all officers from all regions if "All" is selected
+      return Object.values(OFFICER_MAP).flat().sort()
+    }
+    return OFFICER_MAP[filterPuskeswan] || []
+  }, [filterPuskeswan])
+
   const filteredReports = useMemo(() => {
     return allReports.filter((r: any) => {
       const searchStr = ((r.farmerName || "") + (r.officerName || "") + (r.farmerAddress || "")).toLowerCase()
       const matchSearch = searchStr.includes(searchQuery.toLowerCase())
       const matchPuskeswan = filterPuskeswan === "all" || r.puskeswan === filterPuskeswan
-      return matchSearch && matchPuskeswan
+      const matchOfficer = filterOfficer === "all" || r.officerName === filterOfficer
+      return matchSearch && matchPuskeswan && matchOfficer
     })
-  }, [allReports, searchQuery, filterPuskeswan])
+  }, [allReports, searchQuery, filterPuskeswan, filterOfficer])
 
   const handleDelete = (reportId: string, isMock?: boolean) => {
     if (isMock) {
@@ -213,7 +237,6 @@ export default function DataLaporanPage() {
           </TabsList>
 
           <TabsContent value="tabel" className="space-y-6 outline-none">
-            {/* Header with Card Background - Now visible on all devices */}
             <Card className="border-none shadow-sm bg-white overflow-hidden mb-6">
               <CardContent className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="space-y-1">
@@ -228,8 +251,8 @@ export default function DataLaporanPage() {
 
             <Card className="border-none shadow-sm bg-white overflow-hidden mb-6 transition-all">
               <CardContent className="p-4 md:p-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="relative group">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="relative group md:col-span-2">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground group-focus-within:text-[#064E3B] transition-colors" />
                     <Input 
                       placeholder="Cari Peternak atau Petugas..."
@@ -238,9 +261,10 @@ export default function DataLaporanPage() {
                       className="w-full bg-[#F3F4F6] border-none rounded-xl h-12 pl-12 font-medium focus-visible:ring-2 focus-visible:ring-[#064E3B]/20 transition-all"
                     />
                   </div>
+                  
                   <Select value={filterPuskeswan} onValueChange={setFilterPuskeswan}>
                     <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-12 px-4 font-medium focus:ring-2 focus:ring-[#064E3B]/20 transition-all">
-                      <SelectValue placeholder="Puskeswan" />
+                      <SelectValue placeholder="Semua Puskeswan" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-none shadow-xl">
                       <SelectItem value="all">Semua Puskeswan</SelectItem>
@@ -251,11 +275,25 @@ export default function DataLaporanPage() {
                       <SelectItem value="puskeswan-topoyo">Topoyo</SelectItem>
                     </SelectContent>
                   </Select>
+
+                  <Select value={filterOfficer} onValueChange={setFilterOfficer}>
+                    <SelectTrigger className="bg-[#F3F4F6] border-none rounded-xl h-12 px-4 font-medium focus:ring-2 focus:ring-[#064E3B]/20 transition-all">
+                      <div className="flex items-center gap-2">
+                        <Filter className="size-4 text-[#064E3B]" />
+                        <SelectValue placeholder="Semua Petugas" />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-none shadow-xl">
+                      <SelectItem value="all">Semua Petugas</SelectItem>
+                      {currentAvailableOfficers.map((officer) => (
+                        <SelectItem key={officer} value={officer}>{officer}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Desktop Table */}
             <div className="hidden md:block bg-white rounded-2xl border border-border/40 shadow-sm overflow-hidden">
               <Table className="table-fixed w-full">
                 <TableHeader className="bg-[#F8FAFC]">
@@ -298,7 +336,6 @@ export default function DataLaporanPage() {
               </Table>
             </div>
 
-            {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
               {loading ? (
                 Array.from({ length: 4 }).map((_, i) => (
@@ -399,7 +436,6 @@ export default function DataLaporanPage() {
         </Tabs>
       </div>
 
-      {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto rounded-3xl p-0 border-none shadow-2xl">
           <DialogHeader className="p-8 bg-[#064E3B] text-white rounded-t-3xl sticky top-0 z-10">
